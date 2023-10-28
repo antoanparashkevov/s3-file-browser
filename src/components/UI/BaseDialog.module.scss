@@ -1,0 +1,34 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.dialog {
+    all: unset;//since the browser adds some styles by default
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    border-radius: 16px;
+    color: variables.$black;
+    background-color: variables.$white;
+    box-shadow: variables.$box-shadow;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.dialog_header {
+    background-color: #5889db;
+    color: variables.$white;
+    width: 100%;
+    padding: 1rem;
+}
+
+.dialog_section {
+    padding: 1.5rem 3rem;
+}
+
+@media screen and (max-width: 630px) {
+    .dialog {
+        width: 90%;
+    }
+}

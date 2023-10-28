@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+//primary button
 export const Button = styled.button<{$primary?: boolean, $small?: boolean}>`
     display: inline-flex;
     justify-content: center;
@@ -25,3 +26,11 @@ export const Button = styled.button<{$primary?: boolean, $small?: boolean}>`
         box-shadow: 0 0 10px black;
     }
 `;
+
+//secondary button
+export const SecondaryButton = styled(Button)<{$secondary?: boolean}>`
+    font-weight: ${props => props.$secondary ? 600 : 700};
+    color: ${props => props.$secondary ? "#1FCC79" : "#FFFFFF" };
+    background-color: ${props => props.$primary ? "#FFFFFF" : "#1FCC79"};
+    border: ${props => props.$primary ? "2px solid #1FCC79" : "none"};
+`

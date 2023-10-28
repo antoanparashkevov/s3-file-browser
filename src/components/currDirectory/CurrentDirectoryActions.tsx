@@ -3,7 +3,7 @@ import styles from "./CurrentDirectoryActions.module.scss";
 import classNames from "classnames/bind";
 
 //UI components
-import { Button } from "../UI/BaseButton";
+import { Button } from "../UI/BaseButtons";
 
 const cx = classNames.bind(styles);
 
