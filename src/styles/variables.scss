@@ -1,0 +1,36 @@
+//font family
+$default-font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+
+//fonts
+$font-size-small: 12px;
+$font-size-normal: 15px !default;
+$font-size-bigger: 17px;
+$font-size-biggest: 22px !default;
+
+$line-height-normal: 25px !default;
+$line-height-bigger: 27px;
+$line-height-biggest: 32px;
+
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
+//colors
+$main-text-color: #b0aeb1;
+$secondary-text-color: #e8e8e8;
+$tree-view-bg-color: #4c4950;
+$current-dir-bg-color: #231c2c;
+$folder-bg-color: #61cfff;
+$grey: #87858b;
+$light-grey: #f2f2f2;
+$mid-grey: #bfbfbf;
+$white: #FFFFFF;
+$black: #000000;
+$outlet: #a63b00;
+$red: #FF6464;
+
+//borders
+$border-color: #373638;
+$box-shadow: 0 0.5rem 1rem rgba($black, 0.15) !default;

@@ -1,0 +1,7 @@
+//SASS interpolation to embed the result of a SASS expression
+@mixin flexbox($j-content, $a-items, $flex-flow) {
+    display: flex;
+    flex-flow: #{$flex-flow};
+    justify-content: #{$j-content};
+    align-items: #{$a-items};
+}
