@@ -1,0 +1,38 @@
+@use '../styles/variables';
+@use '../styles/mixins';
+
+.tree_view {
+    min-width: 250px;
+    height: 100%;
+    background-color: variables.$tree-view-bg-color;
+}
+
+.tree_view_list {
+    @include mixins.flexbox('center', 'center', 'column nowrap');
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+//scrollbar styles
+
+//FF
+.tree_view_list {
+    scrollbar-color: variables.$grey transparent;
+    scrollbar-width: thin;
+}
+
+//other browsers (Chrome, Safari)
+.tree_view_list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.tree_view_list::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.tree_view_list::-webkit-scrollbar-thumb {
+    background-color: variables.$grey;
+    border-radius: 10px;
+}

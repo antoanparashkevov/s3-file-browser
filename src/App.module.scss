@@ -1,0 +1,12 @@
+@use './styles/mixins';
+@use './styles/variables';
+
+.root_section {
+    @include mixins.flexbox('center', 'center', 'row nowrap');
+    width: 90%;
+    height: 550px;
+    border-radius: 24px;
+    border-color: variables.$border-color;
+    box-shadow: variables.$box-shadow;
+    overflow: hidden;
+}

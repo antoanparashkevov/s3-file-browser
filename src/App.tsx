@@ -1,11 +1,16 @@
 import React from 'react';
-import './App.module.scss';
+import styles from './App.module.scss';
 
-function App() {
+//components
+import DirectoryTree from "./components/DirectoryTree";
+import CurrentDirectory from "./components/CurrentDirectory";
+
+const App: React.FC = () => {
   
   return (
-      <section>
-      
+      <section className={styles["root_section"]}>
+        <DirectoryTree />
+        <CurrentDirectory />
       </section>
   );
 }
