@@ -1,4 +1,4 @@
-import { FormEvent, Fragment } from "react";
+import { FormEvent, Fragment, useEffect, useState } from "react";
 import styles from './SubmitForm.module.scss';
 import classNames from "classnames/bind";
 
@@ -12,7 +12,7 @@ import { Button, SecondaryButton } from "../UI/BaseButtons";
 const cx = classNames.bind(styles);
 
 const SubmitForm = () => {
-    const formIsValid = true;
+    const [formIsValid, setFormIsValid] = useState<boolean>(false)
     
     const {
         value: enteredAccessKey,
@@ -51,6 +51,10 @@ const SubmitForm = () => {
         console.log('enteredSecretKey >>> ', enteredSecretKey)
         console.log('enteredBucketName >>> ', enteredBucketName)
     };
+    
+    useEffect(() => {
+        setFormIsValid((accessKeyIsValid && secretKeyIsValid && bucketNameIsValid));
+    }, [accessKeyIsValid, secretKeyIsValid, bucketNameIsValid])
     
     return (
         <Fragment>
