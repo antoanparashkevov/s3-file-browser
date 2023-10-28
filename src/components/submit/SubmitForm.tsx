@@ -7,7 +7,7 @@ import Input from "../UI/Input";
 
 //custom hooks
 import useInput from "../../hooks/use-http";
-import { SecondaryButton } from "../UI/BaseButtons";
+import { Button, SecondaryButton } from "../UI/BaseButtons";
 
 const cx = classNames.bind(styles);
 
@@ -115,7 +115,7 @@ const SubmitForm = () => {
                 
                 <div className={cx("form_actions")}>
                     <SecondaryButton 
-                        type='submit' 
+                        type='submit'
                         disabled={!formIsValid}
                     >
                         Submit

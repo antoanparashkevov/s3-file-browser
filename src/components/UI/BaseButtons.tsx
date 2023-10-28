@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 //primary button
-export const Button = styled.button<{$primary?: boolean, $small?: boolean}>`
+export const Button = styled.button<{$fill?: boolean, $small?: boolean}>`
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -11,28 +11,44 @@ export const Button = styled.button<{$primary?: boolean, $small?: boolean}>`
     white-space: nowrap;
     font-size: 15px;
     border-radius: 16px;
-    font-weight: ${props => props.$primary ? 400 : 700};
-    background-color: ${props => props.$primary ? '#FFFFFF' : '#adadad'};
-    color: ${props => props.$primary ? "#adadad" : "#FFFFFF"};
-    border: ${props => props.$primary ? "2px solid #C8C8C8" : "none"};
+    font-weight: ${props => props.$fill ? 600 : 700};
+    background-color: ${props => props.$fill ? '#adadad' : '#FFFFFF'};
+    color: ${props => props.$fill ? "#FFFFFF" : "#adadad"};
+    border: ${props => props.$fill ? "none" : "2px solid #C8C8C8"};
     padding: ${props => props.$small ? "10px 20px" : "13px 26px"};
     
     &:hover {
-        background-color: ${props => props.$primary ? "#bdbdbd" : "#888888"};
-        color: ${props => props.$primary ? "#FFFFFF" : ""}
+        background-color: ${props => props.$fill ? "#bdbdbd" : "#888888"};
+        color: #FFFFFF;
     }
     
     &:focus {
-        box-shadow: 0 0 10px black;
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0, 0.4);
     }
     
-//TODO disabled
+    &:disabled {
+        opacity: .65;
+        cursor: not-allowed;
+    }
+    
+    &:disabled:hover {
+        color: ${props => props.$fill ? "#FFFFFF" : "#adadad"};
+        background-color: ${props => props.$fill ? '#adadad' : '#FFFFFF'};;
+    }
 `;
 
 //secondary button
-export const SecondaryButton = styled(Button)<{$secondary?: boolean}>`
-    font-weight: ${props => props.$secondary ? 600 : 700};
-    color: ${props => props.$secondary ? "#1FCC79" : "#FFFFFF" };
-    background-color: ${props => props.$primary ? "#FFFFFF" : "#1FCC79"};
-    border: ${props => props.$primary ? "2px solid #1FCC79" : "none"};
+export const SecondaryButton = styled(Button)<{$fill?: boolean}>`
+    color: ${props => props.$fill ? "#FFFFFF" : "#1FCC79" };
+    background-color: ${props => props.$fill ? "#1FCC79" : "#FFFFFF"};
+    border: ${props => props.$fill ? "none" : "2px solid #1FCC79"};
+    
+    &:hover {
+        background-color: #13a65f;
+    }
+
+    &:disabled:hover {
+        color: ${props => props.$fill ? "#FFFFFF" : "#1FCC79" };
+        background-color: ${props => props.$fill ? "#1FCC79" : "#FFFFFF"};
+    }
 `
