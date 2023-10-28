@@ -1,0 +1,8 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.current_directory_actions {
+    width: 100%;
+    height: 60px;
+    background-color: variables.$actions-current-dir-bg-color;
+}

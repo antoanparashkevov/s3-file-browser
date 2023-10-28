@@ -1,14 +1,16 @@
-@use '../styles/variables';
-@use '../styles/mixins';
+@use '../../styles/variables';
+@use '../../styles/mixins';
 
 .tree_view {
     min-width: 250px;
     height: 100%;
+    padding: 3rem 0;
     background-color: variables.$tree-view-bg-color;
+    border-right: 1px solid black;
 }
 
 .tree_view_list {
-    @include mixins.flexbox('center', 'center', 'column nowrap');
+    @include mixins.flexbox('flex-start', 'center', 'column nowrap');
     width: 100%;
     height: 100%;
     overflow: hidden;

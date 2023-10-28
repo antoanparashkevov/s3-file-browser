@@ -2,8 +2,8 @@ import React from 'react';
 import styles from './App.module.scss';
 
 //components
-import DirectoryTree from "./components/DirectoryTree";
-import CurrentDirectory from "./components/CurrentDirectory";
+import DirectoryTree from "./components/tree/DirectoryTree";
+import CurrentDirectory from "./components/currDirectory/CurrentDirectory";
 
 const App: React.FC = () => {
   
