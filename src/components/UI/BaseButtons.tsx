@@ -25,6 +25,8 @@ export const Button = styled.button<{$primary?: boolean, $small?: boolean}>`
     &:focus {
         box-shadow: 0 0 10px black;
     }
+    
+//TODO disabled
 `;
 
 //secondary button

@@ -24,7 +24,7 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = (
             <ul role='list' className={styles['tree_view_list']}>
                 {
                     array.map(el=> {
-                        return <TreeViewDirectoryItem />
+                        return <TreeViewDirectoryItem key={el} />
                     })
                 }
             </ul>
