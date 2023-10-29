@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, useEffect, useState } from "react";
+import React, { FormEvent, Fragment, useEffect, useState } from "react";
 import styles from './SubmitForm.module.scss';
 import classNames from "classnames/bind";
 
@@ -7,11 +7,18 @@ import Input from "../UI/Input";
 
 //custom hooks
 import useInput from "../../hooks/use-http";
-import { Button, SecondaryButton } from "../UI/BaseButtons";
+import { SecondaryButton } from "../UI/BaseButtons";
+
+//interface
+import { credentials } from "../../aws/credentials";
 
 const cx = classNames.bind(styles);
 
-const SubmitForm = () => {
+interface SubmitFormProps {
+    onSaveData: ({}: credentials) => void
+}
+
+const SubmitForm: React.FC<SubmitFormProps> = ({onSaveData}) => {
     const [formIsValid, setFormIsValid] = useState<boolean>(false)
     
     const {
@@ -46,10 +53,18 @@ const SubmitForm = () => {
         //we don't want that -> event.preventDefault()
         event.preventDefault();
         
-        console.log('event >>> ', event)
         console.log('enteredAccessKey >>> ', enteredAccessKey)
         console.log('enteredSecretKey >>> ', enteredSecretKey)
         console.log('enteredBucketName >>> ', enteredBucketName)
+        
+        if( enteredSecretKey && enteredSecretKey && enteredBucketName ) {
+            onSaveData({
+                accessKeyId: enteredAccessKey,
+                secretAccessKey: enteredSecretKey,
+                bucketName: enteredBucketName
+            })
+        }
+        
     };
     
     useEffect(() => {

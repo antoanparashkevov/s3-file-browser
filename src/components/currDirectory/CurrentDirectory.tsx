@@ -11,7 +11,7 @@ interface CurrentDirectoryProps {//TODO remove question marks when we build the 
 const CurrentDirectory: React.FC<CurrentDirectoryProps> = (
     {currentDirectory}
 ) => {
-    console.log('currentDirectory >>> ', currentDirectory)
+    // console.log('currentDirectory >>> ', currentDirectory)
     
     return (
         <section className={styles['current_directory']}>

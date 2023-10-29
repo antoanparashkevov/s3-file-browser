@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useLayoutEffect, useState, Fragment } from 'react';
+import { S3Client, ListObjectsV2Command, PutObjectCommand } from '@aws-sdk/client-s3';
 import styles from './App.module.scss';
 
 //components
@@ -9,15 +10,75 @@ import SubmitForm from "./components/submit/SubmitForm";
 //UI components
 import BaseDialog from "./components/UI/BaseDialog";
 
+//credentials
+import { credentials } from "./aws/credentials";
+
+const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
+console.log('region >>> ', region)
+
+let encodedCredentials: string | null | credentials = localStorage.getItem('awsCredentials');
+console.log('encodedCredentials (not parsed) >>> ', encodedCredentials);
+
+if( encodedCredentials ) {
+    encodedCredentials = JSON.parse(encodedCredentials);
+}
+
+console.log('encodedCredentials (parsed) >>> ', encodedCredentials)
+
+let client: any;
+
+if( encodedCredentials && typeof encodedCredentials === 'object' && encodedCredentials.accessKeyId && encodedCredentials.secretAccessKey ) {
+    client = new S3Client({
+        region,
+        credentials: {
+            accessKeyId: encodedCredentials.accessKeyId,
+            secretAccessKey: encodedCredentials.secretAccessKey
+        }
+    })
+}
+
+// const data = await client.send(new ListObjectsV2Command({
+//     Bucket: "llib-236960695173-1"
+// }));
+
 const App: React.FC = () => {
+    const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(false);
+    
+    useLayoutEffect(() => {
+       if( client ) {
+           setHasLoggedIn(true)
+           console.log('client (mounted) >>> ', client)
+       }
+    }, [])
+    
+    const handleEnteredCredentials = (data: credentials) => {
+        console.log('entered data >>> ', data);
+        setHasLoggedIn(true)
+        localStorage.setItem('awsCredentials', JSON.stringify(data))
+        
+        //Update the S3 client with the new credentials
+        client = new S3Client({
+            region,
+            credentials: {
+                accessKeyId: data.accessKeyId,
+                secretAccessKey:data.secretAccessKey
+            }
+        }) 
+        
+        console.log('client >>> ', client)
+    }
   
     return (
         <section className={styles["root_section"]}>
-            <BaseDialog>
-                <SubmitForm />
-            </BaseDialog>
-            <DirectoryTree />
-            <CurrentDirectory />
+            {!hasLoggedIn ?
+                <BaseDialog>
+                    <SubmitForm onSaveData={handleEnteredCredentials} />
+                </BaseDialog> :
+                <Fragment>
+                    <DirectoryTree />
+                    <CurrentDirectory />
+                </Fragment>
+            }
         </section>
     );
 }

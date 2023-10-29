@@ -16,8 +16,8 @@ interface DirectoryTreeProps {//TODO remove question marks when we build the UI
 const DirectoryTree: React.FC<DirectoryTreeProps> = (
     {directories, onDirectoryClick, currentDirectory}
 ) => {
-    console.log('directories >>> ', directories)
-    console.log('currentDirectory >>> ', currentDirectory)
+    // console.log('directories >>> ', directories)
+    // console.log('currentDirectory >>> ', currentDirectory)
     
     return (
         <section className={styles['tree_view']}>
