@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import { S3Client, ListObjectsV2Command, PutObjectCommand } from '@aws-sdk/client-s3';
 import styles from './App.module.scss';
 
@@ -42,13 +42,12 @@ if( encodedCredentials && typeof encodedCredentials === 'object' && encodedCrede
 // }));
 
 const App: React.FC = () => {
-    const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(false);
+    const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(!!client);
+    const [objects, setObjects] = useState([]);
     
-    useLayoutEffect(() => {
-       if( client ) {
-           setHasLoggedIn(true)
-           console.log('client (mounted) >>> ', client)
-       }
+    useEffect(() => {
+        
+        fetchObjects();
     }, [])
     
     const handleEnteredCredentials = (data: credentials) => {
@@ -67,6 +66,21 @@ const App: React.FC = () => {
         
         console.log('client >>> ', client)
     }
+    
+    const fetchObjects = async () => {
+        
+        try {
+            if(encodedCredentials && typeof encodedCredentials === 'object') {
+                const data = await client.send(new ListObjectsV2Command({Bucket: encodedCredentials.bucketName}))
+                setObjects(data.Contents)
+                console.log('fetched Objects >>> ', data)
+            } else {
+                throw new Error("An error occurred while fetching objects");
+            }
+        } catch (error) {
+            console.error('Error listing objects >>> ', error)
+        }
+    }
   
     return (
         <section className={styles["root_section"]}>
@@ -75,8 +89,8 @@ const App: React.FC = () => {
                     <SubmitForm onSaveData={handleEnteredCredentials} />
                 </BaseDialog> :
                 <Fragment>
-                    <DirectoryTree />
-                    <CurrentDirectory />
+                    <DirectoryTree directories={objects} />
+                    <CurrentDirectory client={client} encodedcredentials={encodedCredentials} />
                 </Fragment>
             }
         </section>

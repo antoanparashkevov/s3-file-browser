@@ -1,0 +1,21 @@
+@use '../../styles/mixins';
+@use '../../styles/variables';
+
+.tree_view_item {
+    @include mixins.flexbox('center', 'center', 'row nowrap');
+    column-gap: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.tree_view_item_folder_img {
+    
+}
+
+.tree_view_item_folder_name {
+    font-size: variables.$font-size-bigger;
+}
+
+.tree_view_item_arrow_img {
+    transform: rotate(-90deg);
+}

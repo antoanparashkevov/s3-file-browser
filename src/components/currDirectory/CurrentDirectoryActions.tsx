@@ -4,10 +4,25 @@ import classNames from "classnames/bind";
 
 //UI components
 import { Button } from "../UI/BaseButtons";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 const cx = classNames.bind(styles);
 
-const CurrentDirectoryActions = () => {
+const CurrentDirectoryActions = ({client, encodedcredentials}: {client: any, encodedcredentials: any}) => {
+    
+    const handleClick = async () => {
+        try {
+            await client.send(
+                new PutObjectCommand({
+                    Bucket: encodedcredentials.bucketName,
+                    Key: 'prefix/subprefix/object.txt',
+                    Body: "Hello, this is the content of the new object!"
+                })
+            )
+        } catch (err) {
+            console.error('error uploading object: ', err)
+        }
+    }
     
     return (
         <div className={styles['current_directory_actions']}>
@@ -28,7 +43,7 @@ const CurrentDirectoryActions = () => {
                 </div>
             </div>
             <div className={styles['current_directory_actions_create_delete']}>
-                <Button $small>Create</Button>
+                <Button $small onClick={handleClick}>Create</Button>
             </div>
         </div>
     )

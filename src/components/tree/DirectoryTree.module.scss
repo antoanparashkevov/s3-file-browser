@@ -4,7 +4,7 @@
 .tree_view {
     min-width: 250px;
     height: 100%;
-    padding: 3rem 0;
+    padding: 1rem 0;
     background-color: variables.$tree-view-bg-color;
     border-right: 1px solid black;
 }
@@ -15,6 +15,7 @@
     height: 100%;
     overflow: hidden;
     overflow-y: auto;
+    row-gap: 20px;
 }
 
 //scrollbar styles
