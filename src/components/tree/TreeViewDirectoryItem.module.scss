@@ -2,7 +2,7 @@
 @use '../../styles/variables';
 
 .tree_view_item {
-    @include mixins.flexbox('center', 'center', 'row nowrap');
+    @include mixins.flexbox('flex-start', 'center', 'row nowrap');
     column-gap: 10px;
     width: 100%;
     cursor: pointer;

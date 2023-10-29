@@ -10,7 +10,8 @@ const cx = classNames.bind(styles);
 
 const CurrentDirectoryActions = ({client, encodedcredentials}: {client: any, encodedcredentials: any}) => {
     
-    const handleClick = async () => {
+    const createFolder = async () => {
+        console.log('create folder')
         try {
             await client.send(
                 new PutObjectCommand({
@@ -22,6 +23,10 @@ const CurrentDirectoryActions = ({client, encodedcredentials}: {client: any, enc
         } catch (err) {
             console.error('error uploading object: ', err)
         }
+    }
+    
+    const createFile = async () => {
+        console.log('create file')
     }
     
     return (
@@ -42,8 +47,9 @@ const CurrentDirectoryActions = ({client, encodedcredentials}: {client: any, enc
                     <img src="/icons/arrow.svg" alt="Next Icon" width={24} height={24}/>
                 </div>
             </div>
-            <div className={styles['current_directory_actions_create_delete']}>
-                <Button $small onClick={handleClick}>Create</Button>
+            <div className={styles['current_directory_actions_buttons']}>
+                <Button $small onClick={createFolder}>Create Folder</Button>
+                <Button $small onClick={createFile}>Create File</Button>
             </div>
         </div>
     )

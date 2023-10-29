@@ -11,48 +11,50 @@ import SubmitForm from "./components/submit/SubmitForm";
 import BaseDialog from "./components/UI/BaseDialog";
 
 //credentials
-import { credentials } from "./aws/credentials";
+import { awsCredentials } from "./aws/credentials";
+
+//interfaces
+import { awsObjectElement } from "./aws/object";
+import { directoryElement } from "./aws/directory";
 
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
-console.log('region >>> ', region)
 
-let encodedCredentials: string | null | credentials = localStorage.getItem('awsCredentials');
-console.log('encodedCredentials (not parsed) >>> ', encodedCredentials);
+let credentials: string | null | awsCredentials = localStorage.getItem('awsCredentials');
 
-if( encodedCredentials ) {
-    encodedCredentials = JSON.parse(encodedCredentials);
+if( credentials ) {
+    credentials = JSON.parse(credentials);
 }
-
-console.log('encodedCredentials (parsed) >>> ', encodedCredentials)
 
 let client: any;
 
-if( encodedCredentials && typeof encodedCredentials === 'object' && encodedCredentials.accessKeyId && encodedCredentials.secretAccessKey ) {
+if( 
+    credentials &&
+    typeof credentials === 'object' &&
+    credentials.accessKeyId && credentials.secretAccessKey
+) {
     client = new S3Client({
         region,
         credentials: {
-            accessKeyId: encodedCredentials.accessKeyId,
-            secretAccessKey: encodedCredentials.secretAccessKey
+            accessKeyId: credentials.accessKeyId,
+            secretAccessKey: credentials.secretAccessKey
         }
     })
 }
 
-// const data = await client.send(new ListObjectsV2Command({
-//     Bucket: "llib-236960695173-1"
-// }));
-
 const App: React.FC = () => {
     const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(!!client);
-    const [objects, setObjects] = useState([]);
+    const [awsObjects, setAwsObjects] = useState<awsObjectElement[]>([]);
+    const [modifiedDirectories, setModifiedDirectories] = useState<directoryElement[]>([])
     
     useEffect(() => {
-        
-        fetchObjects();
+        if( client ) {
+            fetchObjects();
+        } 
     }, [])
     
-    const handleEnteredCredentials = (data: credentials) => {
-        console.log('entered data >>> ', data);
+    const handleEnteredCredentials = (data: awsCredentials) => {
         setHasLoggedIn(true)
+        
         localStorage.setItem('awsCredentials', JSON.stringify(data))
         
         //Update the S3 client with the new credentials
@@ -68,17 +70,21 @@ const App: React.FC = () => {
     }
     
     const fetchObjects = async () => {
-        
         try {
-            if(encodedCredentials && typeof encodedCredentials === 'object') {
-                const data = await client.send(new ListObjectsV2Command({Bucket: encodedCredentials.bucketName}))
-                setObjects(data.Contents)
-                console.log('fetched Objects >>> ', data)
+            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                const response = await client.send(new ListObjectsV2Command({Bucket: credentials.bucketName}))
+                
+                if( response.$metadata.httpStatusCode === 200 && response.Contents ) {
+                    setAwsObjects(response.Contents)
+                }
+                
+                console.log('objects (fetchObjects) >>> ', response)
             } else {
+                setHasLoggedIn(false);
                 throw new Error("An error occurred while fetching objects");
             }
         } catch (error) {
-            console.error('Error listing objects >>> ', error)
+            console.log('error from (fetchObjects) >>> ', error)
         }
     }
   
@@ -89,8 +95,8 @@ const App: React.FC = () => {
                     <SubmitForm onSaveData={handleEnteredCredentials} />
                 </BaseDialog> :
                 <Fragment>
-                    <DirectoryTree directories={objects} />
-                    <CurrentDirectory client={client} encodedcredentials={encodedCredentials} />
+                    <DirectoryTree directories={modifiedDirectories} />
+                    <CurrentDirectory client={client} encodedcredentials={credentials} />
                 </Fragment>
             }
         </section>

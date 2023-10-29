@@ -10,12 +10,12 @@ import useInput from "../../hooks/use-http";
 import { SecondaryButton } from "../UI/BaseButtons";
 
 //interface
-import { credentials } from "../../aws/credentials";
+import { awsCredentials } from "../../aws/credentials";
 
 const cx = classNames.bind(styles);
 
 interface SubmitFormProps {
-    onSaveData: ({}: credentials) => void
+    onSaveData: ({}: awsCredentials) => void
 }
 
 const SubmitForm: React.FC<SubmitFormProps> = ({onSaveData}) => {
