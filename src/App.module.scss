@@ -10,3 +10,11 @@
     box-shadow: variables.$box-shadow;
     overflow: hidden;
 }
+
+.tree_view {
+    min-width: 250px;
+    height: 100%;
+    padding: 1rem 2rem;
+    background-color: variables.$tree-view-bg-color;
+    border-right: 1px solid black;
+}

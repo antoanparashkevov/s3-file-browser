@@ -4,46 +4,27 @@ import classNames from "classnames/bind";
 
 //UI components
 import { Button } from "../UI/BaseButtons";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 const cx = classNames.bind(styles);
 
-const CurrentDirectoryActions = ({client, encodedcredentials}: {client: any, encodedcredentials: any}) => {
+const CurrentDirectoryActions:React.FC = () => {
     
-    const createFolder = async () => {
-        console.log('create folder')
-        try {
-            await client.send(
-                new PutObjectCommand({
-                    Bucket: encodedcredentials.bucketName,
-                    Key: 'prefix/subprefix/object.txt',
-                    Body: "Hello, this is the content of the new object!"
-                })
-            )
-        } catch (err) {
-            console.error('error uploading object: ', err)
-        }
+    const createFolder = () => {
+        console.log('create folder');
     }
     
-    const createFile = async () => {
-        console.log('create file')
+    const createFile = () => {
+        console.log('create file');
     }
+    
     
     return (
         <div className={styles['current_directory_actions']}>
             <div className={styles['current_directory_actions_navigate']}>
-               <div className={cx({
-                        "arrow_wrapper": true,
-                        "arrow_prev": true,
-                    })}
-               >
+               <div className={cx("arrow_wrapper", "arrow_prev")}>
                    <img src="/icons/arrow.svg" alt="Prev Icon" width={24} height={24}/>
                </div>
-                <div className={cx({
-                    "arrow_wrapper": true,
-                    "arrow_next": true,
-                })}
-                >
+                <div className={cx("arrow_wrapper", "arrow_next")}>
                     <img src="/icons/arrow.svg" alt="Next Icon" width={24} height={24}/>
                 </div>
             </div>

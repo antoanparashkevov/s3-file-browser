@@ -8,14 +8,15 @@
     cursor: pointer;
 }
 
-.tree_view_item_folder_img {
-    
-}
-
 .tree_view_item_folder_name {
     font-size: variables.$font-size-bigger;
 }
 
 .tree_view_item_arrow_img {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease-in;
+}
+
+.rotate_arrow {
     transform: rotate(-90deg);
 }
