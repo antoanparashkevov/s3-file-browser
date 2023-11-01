@@ -18,12 +18,3 @@
     justify-content: start;
     align-content: start;
 }
-
-.current_directory_view_grid_item {
-    @include mixins.flexbox('center', 'center', 'column nowrap');
-    cursor: pointer;
-    
-    &:hover {
-        color: #837f83;
-    }
-}

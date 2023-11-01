@@ -48,6 +48,7 @@ if(
 const App: React.FC = () => {
     const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(!!client);
     const [modifiedTree, setModifiedTree] = useState<tree>({})
+    const [currentDirectory, setCurrentDirectory] = useState([])
     
     useEffect(() => {
         if( client ) {
@@ -85,6 +86,7 @@ const App: React.FC = () => {
                 
                 if( response.$metadata.httpStatusCode === 200 && response.Contents ) {
                     setModifiedTree(getObjectTree(response.Contents.map((k: awsObjectElement) => k.Key)))
+                    setCurrentDirectory(response.Contents.map((k: awsObjectElement) => k.Key))
                 }
                 
             } else {
@@ -199,7 +201,7 @@ const App: React.FC = () => {
                         <section className={styles['tree_view']}>
                             <DirectoryTree tree={modifiedTree} name='Root' onDoubleClick={fetchObjectsFromSomePrefix} />
                         </section>
-                        <CurrentDirectory />
+                        <CurrentDirectory currentDirectory={currentDirectory} />
                     </Fragment>
                 }
             </section>
