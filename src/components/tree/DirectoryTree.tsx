@@ -10,6 +10,7 @@ import { tree } from "../../utils/getObjectTree";
 interface DirectoryTreeRecursiveProps {//TODO remove question marks when we build the UI
     tree: tree,
     name: string,
+    onDoubleClick: (directoryName: string) => void
 }
 
 //Recursive component to render the tree view
@@ -17,15 +18,20 @@ const DirectoryTree: React.FC<DirectoryTreeRecursiveProps> = (
     {
         tree,
         name,
+        onDoubleClick
     }
 ) => {
     const [expandSubDir, setExpandSubDir] = useState<boolean>(false);
     const keys: string[] = Object.keys(tree);
     
+    const handleDoubleClick = (directoryName: string) => {
+        onDoubleClick(directoryName)
+    }
+    
     return (
         <ul role='list' className={styles['tree_view_list']}>
             {keys.length === 0 ?//a folder without sub folders
-                <DirectoryTreeItem directoryName={name}/> :
+                <DirectoryTreeItem directoryName={name} onDoubleClick={handleDoubleClick}/> :
                  (
                     <Fragment>
                         {keys.map((key, index) => {
@@ -35,11 +41,12 @@ const DirectoryTree: React.FC<DirectoryTreeRecursiveProps> = (
                                         <DirectoryTreeItem 
                                             directoryName={name}
                                             hasSubDirectories={keys.length > 0}
+                                            onDoubleClick={handleDoubleClick}
                                             onExpandSubDirectories={(isExpanded) => setExpandSubDir(isExpanded)}
                                         />
                                     }
                                     {expandSubDir &&//when we have at least one sub folder, we want to call the entire component recursively
-                                        <DirectoryTree tree={tree[key]} name={key} />
+                                        <DirectoryTree tree={tree[key]} name={key} onDoubleClick={handleDoubleClick} />
                                     }
                                 </Fragment>
                             )

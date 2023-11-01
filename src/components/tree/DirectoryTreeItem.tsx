@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { BaseSyntheticEvent, useRef } from "react";
 import styles from './DirectoryTreeItem.module.scss';
 import classNames from "classnames/bind";
 
@@ -7,20 +7,27 @@ const cx = classNames.bind(styles);
 interface DirectoryTreeItemProps {
     directoryName: string,
     hasSubDirectories?: boolean,
-    onExpandSubDirectories?: (isExpanded: boolean) => void
+    onExpandSubDirectories?: (isExpanded: boolean) => void,
+    onDoubleClick: (directoryName: string) => void
 }
 
 const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
     {
         directoryName,
         hasSubDirectories = false,
-        onExpandSubDirectories
+        onExpandSubDirectories,
+        onDoubleClick,
     }
 ) => {
     const expandSubDirectories = useRef<boolean>(false)
     
+    const handleDoubleClick = (e: BaseSyntheticEvent) => {
+        e.stopPropagation();
+        onDoubleClick(directoryName)
+    }
+    
     return (
-        <li className={styles['tree_view_item']}>
+        <li className={styles['tree_view_item']} onDoubleClick={handleDoubleClick}>
             <img 
                 src="/icons/folder.svg" 
                 alt="Folder" 

@@ -2,7 +2,13 @@ import React, { useState, Fragment, useEffect } from 'react';
 import styles from './App.module.scss';
 
 //aws-sdk
-import { S3Client, ListObjectsV2Command, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+    S3Client,
+    ListObjectsV2Command,
+    PutObjectCommand,
+    DeleteObjectCommand,
+    GetObjectCommand
+} from '@aws-sdk/client-s3';
 
 //components
 import DirectoryTree from "./components/tree/DirectoryTree";
@@ -45,27 +51,9 @@ const App: React.FC = () => {
     
     useEffect(() => {
         if( client ) {
-            fetchObjects();
+            fetchAllObjectsFromABucket();
         } 
     }, []);
-    
-    const fetchObjects = async () => {
-        try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
-                const response = await client.send(new ListObjectsV2Command({Bucket: credentials.bucketName}))
-                
-                if( response.$metadata.httpStatusCode === 200 && response.Contents ) {
-                    setModifiedTree(getObjectTree(response.Contents.map((k: awsObjectElement) => k.Key)))
-                }
-                
-            } else {
-                setHasLoggedIn(false);
-                throw new Error("An error occurred while fetching objects");
-            }
-        } catch (error) {
-            console.log('error from (fetchObjects) >>> ', error)
-        }
-    }
     
     const handleEnteredCredentials = (data: awsCredentials) => {
         setHasLoggedIn(true)
@@ -79,48 +67,149 @@ const App: React.FC = () => {
                 accessKeyId: data.accessKeyId,
                 secretAccessKey:data.secretAccessKey
             }
-        }) 
+        })
         
         console.log('client >>> ', client)
     }
     
-    const createFolder = async () => {
-        console.log('create folder')
+    const fetchAllObjectsFromABucket = async () => {
+        try {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                const params = {
+                    Bucket: credentials.bucketName
+                }
+                const command = new ListObjectsV2Command(params)
+                const response = await client.send(command)
+                
+                console.log('response from fetching objects from a bucket >>>', response)
+                
+                if( response.$metadata.httpStatusCode === 200 && response.Contents ) {
+                    setModifiedTree(getObjectTree(response.Contents.map((k: awsObjectElement) => k.Key)))
+                }
+                
+            } else {
+                setHasLoggedIn(false);
+                throw new Error("An error occurred while fetching objects");
+            }
+        } catch (error) {
+            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
+        }
+    }
+    
+    const fetchObjectsFromSomePrefix = async (directoryName: string) => {
+        
+        try {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                const params = {
+                    Bucket: credentials.bucketName,
+                    Prefix: directoryName
+                }
+                const command = new ListObjectsV2Command(params)
+                const response = await client.send(command)
+                
+                console.log('response from fetching objects from some prefix >>> ', response)
+                
+            } else {
+                setHasLoggedIn(false);
+                throw new Error("An error occurred while fetching objects");
+            }
+        } catch (error) {
+            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
+        }
+    }
+    
+    const createObject = async () => {
+        
         try {
             if( credentials && typeof credentials === 'object' && credentials.bucketName) {
-                await client.send(
-                    new PutObjectCommand({
-                        Bucket: credentials.bucketName,
-                        Key: 'prefix/subprefix/object.txt',
-                        Body: "Hello, this is the content of the new object!"
-                    })
-                )
+                
+                const params = {
+                    Bucket: credentials.bucketName,
+                    Key: 'prefix/subprefix/deeperprefix',
+                    Body: "Hello from deeperprefix (nothing)"
+                }
+                
+                const command = new PutObjectCommand(params)
+                const response = await client.send(command)
+                
+                console.log('response from creating an object >>> ', response)
             }
         } catch (err) {
             console.error('error uploading object: ', err)
         }
     }
     
-    const createFile = async () => {
-        console.log('create file')
+    const getObjectData = async () => {
+
+        try {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                
+                const params = {
+                    Bucket: credentials.bucketName,
+                    Key: 'prefix/subprefix/deeperprefix'
+                }
+                const command = new GetObjectCommand(params)
+                const response = await client.send(command)
+                
+                console.log('response from getting object data >>> ', response)
+                
+                const objectTextData = await response.Body.transformToString();
+                
+                console.log('objectTextData from getting object data >>> ', objectTextData)
+                
+            } else {
+                setHasLoggedIn(false);
+                throw new Error("An error occurred while fetching objects");
+            }
+        } catch (error) {
+            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
+        }
+    }
+    
+    const deleteObject = async () => {
+        
+        try {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                const params = {
+                    Bucket: credentials.bucketName,
+                    Key: 'prefix/subprefix/object.txt'
+                }
+                const command = new DeleteObjectCommand(params)
+                const response = await client.send(command)
+                
+                console.log('response from deleting an object >>> ', response)
+                
+            } else {
+                setHasLoggedIn(false);
+                throw new Error("An error occurred while fetching objects");
+            }
+        } catch (error) {
+            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
+        }
     }
     
     return (
-        <section className={styles["root_section"]}>
-            {!hasLoggedIn ?
-                <BaseDialog>
-                    <SubmitForm onSaveData={handleEnteredCredentials} />
-                </BaseDialog> :
-                <Fragment>
-                    <section className={styles['tree_view']}>
-                        <DirectoryTree tree={modifiedTree} name='Root' />
-                    </section>
-                    <CurrentDirectory />
-                    {/*<button onClick={createFolder}>create folder</button>*/}
-                    {/*<button onClick={createFile}>create file</button>*/}
-                </Fragment>
-            }
-        </section>
+        <Fragment>
+            <section className={styles["root_section"]}>
+                {!hasLoggedIn ?
+                    <BaseDialog>
+                        <SubmitForm onSaveData={handleEnteredCredentials} />
+                    </BaseDialog> :
+                    <Fragment>
+                        <section className={styles['tree_view']}>
+                            <DirectoryTree tree={modifiedTree} name='Root' onDoubleClick={fetchObjectsFromSomePrefix} />
+                        </section>
+                        <CurrentDirectory />
+                    </Fragment>
+                }
+            </section>
+            <br/>
+            <button onClick={fetchAllObjectsFromABucket}>Fetch all objects from a bucket</button>
+            <button onClick={fetchObjectsFromSomePrefix.bind(this, 'prefix')}>Fetch objects from some prefix</button>
+            <button onClick={createObject}>create object</button>
+            <button onClick={getObjectData}>getting object data </button>
+            <button onClick={deleteObject}>delete object</button>
+        </Fragment>
     );
 }
 
