@@ -6,6 +6,10 @@
     column-gap: 10px;
     width: 100%;
     cursor: pointer;
+    
+    &:hover {
+        color: #837f83;
+    }
 }
 
 .tree_view_item_folder_name {
