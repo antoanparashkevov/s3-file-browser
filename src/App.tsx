@@ -116,8 +116,8 @@ const App: React.FC = () => {
                         <DirectoryTree tree={modifiedTree} name='Root' />
                     </section>
                     <CurrentDirectory />
-                    <button onClick={createFolder}>create folder</button>
-                    <button onClick={createFile}>create file</button>
+                    {/*<button onClick={createFolder}>create folder</button>*/}
+                    {/*<button onClick={createFile}>create file</button>*/}
                 </Fragment>
             }
         </section>
