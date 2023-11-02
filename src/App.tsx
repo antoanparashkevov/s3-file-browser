@@ -211,12 +211,17 @@ const App: React.FC = () => {
                     </BaseDialog> :
                     <Fragment>
                         <section className={styles['tree_view']}>
-                            <DirectoryTree 
-                                tree={modifiedTree} 
-                                name='Root' 
-                                absolutePath=''
-                                onDoubleClick={fetchObjectsFromSomePrefix} 
-                            />
+                            {Object.keys(modifiedTree).map(node => {
+                                return (
+                                    <DirectoryTree
+                                        key={node}
+                                        tree={modifiedTree[node]}
+                                        name={node}
+                                        absolutePath={node + '/'}
+                                        onDoubleClick={fetchObjectsFromSomePrefix}
+                                    />
+                                )
+                            })}
                         </section>
                         <CurrentDirectory onChangeFolder={fetchObjectsFromSomePrefix} currentDirectory={currentDirectory} currentPrefix={currentPrefix} />
                     </Fragment>

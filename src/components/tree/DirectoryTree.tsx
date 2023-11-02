@@ -1,5 +1,5 @@
 import styles from "./DirectoryTree.module.scss";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 //UI components
 import DirectoryTreeItem from "./DirectoryTreeItem";
@@ -7,7 +7,7 @@ import DirectoryTreeItem from "./DirectoryTreeItem";
 //interfaces
 import { tree } from "../../utils/getObjectTree";
 
-interface DirectoryTreeRecursiveProps {//TODO remove question marks when we build the UI
+interface DirectoryTreeProps {//TODO remove question marks when we build the UI
     tree: tree,
     name: string,
     onDoubleClick: (directoryName: string) => void,
@@ -15,7 +15,7 @@ interface DirectoryTreeRecursiveProps {//TODO remove question marks when we buil
 }
 
 //Recursive component to render the tree view
-const DirectoryTree: React.FC<DirectoryTreeRecursiveProps> = (
+const DirectoryTree: React.FC<DirectoryTreeProps> = (
     {
         tree,
         name,
