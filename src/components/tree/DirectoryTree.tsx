@@ -10,7 +10,8 @@ import { tree } from "../../utils/getObjectTree";
 interface DirectoryTreeRecursiveProps {//TODO remove question marks when we build the UI
     tree: tree,
     name: string,
-    onDoubleClick: (directoryName: string) => void
+    onDoubleClick: (directoryName: string) => void,
+    absolutePath: string
 }
 
 //Recursive component to render the tree view
@@ -18,20 +19,25 @@ const DirectoryTree: React.FC<DirectoryTreeRecursiveProps> = (
     {
         tree,
         name,
-        onDoubleClick
+        onDoubleClick,
+        absolutePath
     }
 ) => {
     const [expandSubDir, setExpandSubDir] = useState<boolean>(false);
     const keys: string[] = Object.keys(tree);
-    
-    const handleDoubleClick = (directoryName: string) => {
-        onDoubleClick(directoryName)
+
+    const handleDoubleClick = (absolutePath: string) => {
+        onDoubleClick(absolutePath)
     }
     
     return (
         <ul role='list' className={styles['tree_view_list']}>
             {keys.length === 0 ?//a folder without sub folders
-                <DirectoryTreeItem directoryName={name} onDoubleClick={handleDoubleClick}/> :
+                <DirectoryTreeItem 
+                    absolutePath={absolutePath}
+                    directoryName={name} 
+                    onDoubleClick={handleDoubleClick}
+                /> :
                  (
                     <Fragment>
                         {keys.map((key, index) => {
@@ -40,13 +46,14 @@ const DirectoryTree: React.FC<DirectoryTreeRecursiveProps> = (
                                     {index === 0 &&//when we have 2 sibling folders, we want to display the name of the parent folder only once
                                         <DirectoryTreeItem 
                                             directoryName={name}
+                                            absolutePath={absolutePath}
                                             hasSubDirectories={keys.length > 0}
                                             onDoubleClick={handleDoubleClick}
                                             onExpandSubDirectories={(isExpanded) => setExpandSubDir(isExpanded)}
                                         />
                                     }
                                     {expandSubDir &&//when we have at least one sub folder, we want to call the entire component recursively
-                                        <DirectoryTree tree={tree[key]} name={key} onDoubleClick={handleDoubleClick} />
+                                        <DirectoryTree tree={tree[key]} name={key} absolutePath={absolutePath + key + '/'} onDoubleClick={handleDoubleClick} />
                                     }
                                 </Fragment>
                             )

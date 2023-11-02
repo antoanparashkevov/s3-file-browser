@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, useRef } from "react";
+import React, { BaseSyntheticEvent, useEffect, useRef } from "react";
 import styles from './DirectoryTreeItem.module.scss';
 import classNames from "classnames/bind";
 
@@ -8,7 +8,8 @@ interface DirectoryTreeItemProps {
     directoryName: string,
     hasSubDirectories?: boolean,
     onExpandSubDirectories?: (isExpanded: boolean) => void,
-    onDoubleClick: (directoryName: string) => void
+    onDoubleClick: (absolutePath: string) => void,
+    absolutePath: string
 }
 
 const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
@@ -17,13 +18,14 @@ const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
         hasSubDirectories = false,
         onExpandSubDirectories,
         onDoubleClick,
+        absolutePath
     }
 ) => {
     const expandSubDirectories = useRef<boolean>(false)
     
     const handleDoubleClick = (e: BaseSyntheticEvent) => {
         e.stopPropagation();
-        onDoubleClick(directoryName)
+        onDoubleClick(absolutePath)
     }
     
     return (

@@ -98,18 +98,23 @@ const App: React.FC = () => {
         }
     }
     
-    const fetchObjectsFromSomePrefix = async (directoryName: string) => {
+    const fetchObjectsFromSomePrefix = async (absolutePath: string) => {
         
         try {
             if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
                 const params = {
                     Bucket: credentials.bucketName,
-                    Prefix: directoryName
+                    Prefix: absolutePath
                 }
                 const command = new ListObjectsV2Command(params)
                 const response = await client.send(command)
                 
                 console.log('response from fetching objects from some prefix >>> ', response)
+                if( response.Contents ) {
+                    setCurrentDirectory(response.Contents.map((k: awsObjectElement) => k.Key.replace(absolutePath, '').split('/')[0]))
+                } else {
+                    setCurrentDirectory([])
+                }
                 
             } else {
                 setHasLoggedIn(false);
@@ -199,7 +204,12 @@ const App: React.FC = () => {
                     </BaseDialog> :
                     <Fragment>
                         <section className={styles['tree_view']}>
-                            <DirectoryTree tree={modifiedTree} name='Root' onDoubleClick={fetchObjectsFromSomePrefix} />
+                            <DirectoryTree 
+                                tree={modifiedTree} 
+                                name='Root' 
+                                absolutePath=''
+                                onDoubleClick={fetchObjectsFromSomePrefix} 
+                            />
                         </section>
                         <CurrentDirectory currentDirectory={currentDirectory} />
                     </Fragment>
@@ -207,7 +217,7 @@ const App: React.FC = () => {
             </section>
             <br/>
             <button onClick={fetchAllObjectsFromABucket}>Fetch all objects from a bucket</button>
-            <button onClick={fetchObjectsFromSomePrefix.bind(this, 'prefix')}>Fetch objects from some prefix</button>
+            <button onClick={fetchObjectsFromSomePrefix.bind(this, 'prefix/subprefix')}>Fetch objects from some prefix</button>
             <button onClick={createObject}>create object</button>
             <button onClick={getObjectData}>getting object data </button>
             <button onClick={deleteObject}>delete object</button>

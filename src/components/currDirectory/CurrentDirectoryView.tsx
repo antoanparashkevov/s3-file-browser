@@ -1,6 +1,11 @@
-import React from "react";
+import React, { Fragment } from "react";
 import styles from './CurrentDirectoryView.module.scss';
+import classNames from "classnames/bind";
+
+//currDir
 import CurrentDirectoryViewItem from "./CurrentDirectoryViewItem";
+
+const cx = classNames.bind(styles)
 
 interface CurrentDirectoryViewInterface {
     modifiedDirectoryItems: string[]
@@ -12,12 +17,17 @@ const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
     
     return (
         <div className={styles['current_directory_view']}>
-            <div className={styles['current_directory_view_grid']}>
-                {modifiedDirectoryItems.map(item => {
-                    return (
-                        <CurrentDirectoryViewItem key={item} name={item} isFolder={!item.includes('.txt')} />
-                    )
-                })}
+            <div className={cx("current_directory_view_grid", {"current_directory_view_grid_no_data": modifiedDirectoryItems.length === 0})}>
+                {modifiedDirectoryItems.length > 0 ?
+                    <Fragment>
+                        {modifiedDirectoryItems.map(item => {
+                            return (
+                                <CurrentDirectoryViewItem key={item} name={item} isFolder={!item.includes('.txt')} />
+                            )
+                        })}
+                    </Fragment> :
+                    <p>No Files and Folders</p>
+                }
             </div>
         </div>
     )

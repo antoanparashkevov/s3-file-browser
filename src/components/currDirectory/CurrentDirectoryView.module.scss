@@ -18,3 +18,8 @@
     justify-content: start;
     align-content: start;
 }
+
+.current_directory_view_grid.current_directory_view_grid_no_data {
+    grid-auto-columns: 1fr;
+    grid-template-columns: unset;
+}
