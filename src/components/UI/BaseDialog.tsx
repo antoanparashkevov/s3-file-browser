@@ -17,15 +17,17 @@ const Backdrop = styled.div`
 `;
 
 const ModalOverlay = (
-    {children}:
-        {children: ReactNode}
+    {children, title}:
+        {children: ReactNode, title?: string}
 ) => {
     
     return (
         <dialog open className={cx("dialog")}>
-            <header className={cx("dialog_header")}>
-                <h1>Enter your S3 Credentials</h1>
-            </header>
+            {title && 
+                <header className={cx("dialog_header")}>
+                    <h1>{title}</h1>
+                </header>
+            }
             <section className={cx("dialog_section")}>
                 {children}
             </section>
@@ -34,17 +36,21 @@ const ModalOverlay = (
 }
 
 const BaseDialog = (
-    {children}:
-        {children: ReactNode}
+    { children, title, onClose }:
+        { children: ReactNode, title?: string, onClose?: (shouldClose: boolean) => void }
 ) => {
     return (
         <Fragment>
             {createPortal(
-                <Backdrop />,
+                <Backdrop onClick={() => {
+                    if(onClose) {
+                        onClose(true)
+                    }
+                }} />,
                 document.getElementById('backdrop-root') as HTMLDivElement)
             }
             {createPortal(
-                <ModalOverlay>{children}</ModalOverlay>,
+                <ModalOverlay title={title}>{children}</ModalOverlay>,
                 document.getElementById('overlay-root') as HTMLDialogElement)
             }
         </Fragment>

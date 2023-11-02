@@ -27,9 +27,10 @@ import getObjectTree, { tree } from "./utils/getObjectTree";
 
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
 
-let credentials: string | null | awsCredentials = typeof localStorage.getItem('awsCredentials') === 'string' ? JSON.parse(localStorage.getItem('awsCredentials') || '') : null;
+export let credentials: string | null | awsCredentials = typeof localStorage.getItem('awsCredentials') === 'string' ? JSON.parse(localStorage.getItem('awsCredentials') || '') : null;
 
-let client: any;
+
+export let client: any;
 
 if( 
     credentials &&
@@ -45,10 +46,12 @@ if(
     })
 }
 
+
 const App: React.FC = () => {
     const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(!!client);
     const [modifiedTree, setModifiedTree] = useState<tree>({})
     const [currentDirectory, setCurrentDirectory] = useState([])
+    const [currentPrefix, setCurrentPrefix] = useState('')
     
     useEffect(() => {
         if( client ) {
@@ -112,6 +115,7 @@ const App: React.FC = () => {
                 console.log('response from fetching objects from some prefix >>> ', response)
                 if( response.Contents ) {
                     setCurrentDirectory(response.Contents.map((k: awsObjectElement) => k.Key.replace(absolutePath, '').split('/')[0]))
+                    setCurrentPrefix(absolutePath)
                 } else {
                     setCurrentDirectory([])
                 }
@@ -199,7 +203,7 @@ const App: React.FC = () => {
         <Fragment>
             <section className={styles["root_section"]}>
                 {!hasLoggedIn ?
-                    <BaseDialog>
+                    <BaseDialog title='Enter your S3 Credentials'>
                         <SubmitForm onSaveData={handleEnteredCredentials} />
                     </BaseDialog> :
                     <Fragment>
@@ -211,7 +215,7 @@ const App: React.FC = () => {
                                 onDoubleClick={fetchObjectsFromSomePrefix} 
                             />
                         </section>
-                        <CurrentDirectory currentDirectory={currentDirectory} />
+                        <CurrentDirectory currentDirectory={currentDirectory} currentPrefix={currentPrefix} />
                     </Fragment>
                 }
             </section>

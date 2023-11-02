@@ -10,10 +10,11 @@ import getCurrDirectoryView from "../../utils/getCurrDirectoryView";
 
 interface CurrentDirectoryProps {//TODO remove question marks when we build the UI
     currentDirectory: string[],
+    currentPrefix: string,
 }
 
 const CurrentDirectory: React.FC<CurrentDirectoryProps> = (
-    {currentDirectory}
+    {currentDirectory, currentPrefix}
 ) => {
     const [modifiedDirectoryItems, setModifiedDirectoryItems] = useState<string[]>([])
     
@@ -24,7 +25,7 @@ const CurrentDirectory: React.FC<CurrentDirectoryProps> = (
     return (
         <section className={styles['current_directory']}>
             <CurrentDirectoryActions/>
-            <CurrentDirectoryView modifiedDirectoryItems={modifiedDirectoryItems} />
+            <CurrentDirectoryView currentPrefix={currentPrefix} modifiedDirectoryItems={modifiedDirectoryItems} />
         </section>
     )
 };

@@ -8,11 +8,12 @@ import CurrentDirectoryViewItem from "./CurrentDirectoryViewItem";
 const cx = classNames.bind(styles)
 
 interface CurrentDirectoryViewInterface {
-    modifiedDirectoryItems: string[]
+    modifiedDirectoryItems: string[],
+    currentPrefix: string
 }
 
 const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
-    {modifiedDirectoryItems}
+    {modifiedDirectoryItems, currentPrefix}
 ) => {
     
     return (
@@ -22,7 +23,12 @@ const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
                     <Fragment>
                         {modifiedDirectoryItems.map(item => {
                             return (
-                                <CurrentDirectoryViewItem key={item} name={item} isFolder={!item.includes('.txt')} />
+                                <CurrentDirectoryViewItem 
+                                    key={item} 
+                                    currentPrefix={currentPrefix} 
+                                    name={item}
+                                    isFolder={!item.includes('.txt')} 
+                                />
                             )
                         })}
                     </Fragment> :
