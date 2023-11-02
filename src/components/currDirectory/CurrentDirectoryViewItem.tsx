@@ -1,6 +1,6 @@
 import styles from "./CurrentDirectoryViewItem.module.scss";
 import React, { Fragment, useState } from "react";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
 //credentials
 import { credentials, client } from "../../App";
@@ -18,6 +18,8 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
 ) => {
     const [fileContent, setFileContent] = useState<string>('')
     const [openFilePreview, setOpenFilePreview] = useState<boolean>(false);
+    const [openDropdown, setOpenDropdown] = useState<boolean>(false)
+    
     const handleDoubleClick = async (event: any) => {
         
         //when we click on a file
@@ -60,9 +62,42 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         setOpenFilePreview(!shouldClose)
     }
     
+    const handleRightClick = async (e:any) => {
+        e.preventDefault()
+        
+        if(!isFolder) {
+            setOpenDropdown(true)//TODO this should be handled with redux since we want to close the dropdown when we click wherever we want
+        }
+    }
+    
+    const deleteFile = async () => {
+        if( !isFolder ) {
+            console.log('currentPrefix >>> ', currentPrefix);
+            console.log('name >>> ', name)
+            
+            try {
+                if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                    const params = {
+                        Bucket: credentials.bucketName,
+                        Key: currentPrefix + name
+                    }
+                    const command = new DeleteObjectCommand(params)
+                    const response = await client.send(command)
+                    
+                    console.log('response from deleting an object >>> ', response)
+                    
+                } else {
+                    throw new Error("An error occurred while fetching objects");
+                }
+            } catch (error) {
+                console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
+            }
+        }
+    }
+    
     return (
         <Fragment>
-            <div className={styles['current_directory_view_grid_item']} onDoubleClick={handleDoubleClick}>
+            <div onContextMenu={handleRightClick} className={styles['current_directory_view_grid_item']} onDoubleClick={handleDoubleClick}>
                 <img
                     src={isFolder ? '/icons/folder.svg' : '/icons/file.svg'}
                     alt="Folder"
@@ -75,6 +110,13 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                 <BaseDialog onClose={handleCloseTextPreview}>
                     {fileContent}
                 </BaseDialog>
+            }
+            {openDropdown && 
+                <div>
+                    <ul>
+                        <li onClick={deleteFile}>Delete</li>
+                    </ul>
+                </div>
             }
         </Fragment>
     )
