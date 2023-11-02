@@ -25,6 +25,7 @@ const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
     
     const handleDoubleClick = (e: BaseSyntheticEvent) => {
         e.stopPropagation();
+        console.log('absolute path >>>', absolutePath)
         onDoubleClick(absolutePath)
     }
     

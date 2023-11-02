@@ -4,16 +4,18 @@ import classNames from "classnames/bind";
 
 //currDir
 import CurrentDirectoryViewItem from "./CurrentDirectoryViewItem";
+import currentDirectory from "./CurrentDirectory";
 
 const cx = classNames.bind(styles)
 
 interface CurrentDirectoryViewInterface {
     modifiedDirectoryItems: string[],
-    currentPrefix: string
+    currentPrefix: string,
+    onChangeFolder: (absolutePath: string) => void
 }
 
 const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
-    {modifiedDirectoryItems, currentPrefix}
+    {modifiedDirectoryItems, currentPrefix, onChangeFolder}
 ) => {
     
     return (
@@ -24,6 +26,7 @@ const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
                         {modifiedDirectoryItems.map(item => {
                             return (
                                 <CurrentDirectoryViewItem 
+                                    onChangeFolder={(absolutePath) => onChangeFolder(absolutePath)}
                                     key={item} 
                                     currentPrefix={currentPrefix} 
                                     name={item}

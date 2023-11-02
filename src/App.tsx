@@ -102,7 +102,10 @@ const App: React.FC = () => {
     }
     
     const fetchObjectsFromSomePrefix = async (absolutePath: string) => {
-        
+        console.log('absolutePath >>> ', absolutePath)
+        if(!absolutePath.endsWith('/')) {
+            absolutePath = absolutePath + '/'
+        }
         try {
             if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
                 const params = {
@@ -215,7 +218,7 @@ const App: React.FC = () => {
                                 onDoubleClick={fetchObjectsFromSomePrefix} 
                             />
                         </section>
-                        <CurrentDirectory currentDirectory={currentDirectory} currentPrefix={currentPrefix} />
+                        <CurrentDirectory onChangeFolder={fetchObjectsFromSomePrefix} currentDirectory={currentDirectory} currentPrefix={currentPrefix} />
                     </Fragment>
                 }
             </section>

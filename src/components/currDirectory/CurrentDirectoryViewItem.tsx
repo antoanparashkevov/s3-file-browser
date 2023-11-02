@@ -9,19 +9,16 @@ import BaseDialog from "../UI/BaseDialog";
 interface CurrentDirectoryViewItemInterface {
     name: string,
     isFolder: boolean,
-    currentPrefix: string
+    currentPrefix: string,
+    onChangeFolder: (absolutePath: string) => void
 }
 
 const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
-    {name, isFolder, currentPrefix}
+    {name, isFolder, currentPrefix, onChangeFolder}
 ) => {
     const [fileContent, setFileContent] = useState<string>('')
     const [openFilePreview, setOpenFilePreview] = useState<boolean>(false);
     const handleDoubleClick = async (event: any) => {
-        console.log('event >>> ', event)
-        console.log('isFolder >>> ', isFolder)
-        console.log('name >>> ', name)
-        console.log('currentPrefix >>> ', currentPrefix)
         
         //when we click on a file
         if( !isFolder ) {
@@ -51,6 +48,11 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
             } catch (error) {
                 console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
             }
+        }
+        //when we click on a folder
+        else if( isFolder ) { 
+            console.log('absolute path >>> ', currentPrefix + name)
+            onChangeFolder(currentPrefix + name)
         }
     }
     

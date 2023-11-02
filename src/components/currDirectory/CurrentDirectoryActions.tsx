@@ -13,11 +13,12 @@ import { client, credentials } from "../../App";
 const cx = classNames.bind(styles);
 
 interface CurrentDirectoryActionsInterface {
-    currentPrefix: string
+    currentPrefix: string,
+    onPrevAction: (changedPrefix: string) => void
 }
 
 const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
-    {currentPrefix}
+    {currentPrefix, onPrevAction}
 ) => {
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [isFolder, setIsFolder] = useState<boolean>(true)
@@ -84,11 +85,16 @@ const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
         }
     }
     
+    const handlePrevAction = () => {
+        console.log('currentPrefix (prevAction) >>> ', currentPrefix)
+        // onPrevAction(currentPrefix)
+    }
+    
     return (
         <Fragment>
             <div className={styles['current_directory_actions']}>
                 <div className={styles['current_directory_actions_navigate']}>
-                    <div className={cx("arrow_wrapper", "arrow_prev")}>
+                    <div className={cx("arrow_wrapper", "arrow_prev")} onClick={handlePrevAction}>
                         <img src="/icons/arrow.svg" alt="Prev Icon" width={24} height={24}/>
                     </div>
                     <div className={cx("arrow_wrapper", "arrow_next")}>
