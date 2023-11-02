@@ -35,3 +35,20 @@
     @include mixins.flexbox('center', 'center', 'row nowrap');
     column-gap: 15px;
 }
+
+.submit_form {
+    @include mixins.flexbox('center', 'center', 'column nowrap');
+    width: 100%;
+}
+
+.form_control {
+    @include mixins.flexbox('center', 'flex-start', 'column nowrap');
+    margin: 0.8rem 0;
+}
+
+.form_control > label {
+    font-size: variables.$font-size-bigger;
+    line-height: variables.$line-height-bigger;
+    font-weight: variables.$font-weight-bold;
+    margin-bottom: 5px;
+}

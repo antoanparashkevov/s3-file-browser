@@ -24,7 +24,7 @@ const CurrentDirectory: React.FC<CurrentDirectoryProps> = (
     
     return (
         <section className={styles['current_directory']}>
-            <CurrentDirectoryActions/>
+            <CurrentDirectoryActions currentPrefix={currentPrefix}/>
             <CurrentDirectoryView currentPrefix={currentPrefix} modifiedDirectoryItems={modifiedDirectoryItems} />
         </section>
     )
