@@ -6,7 +6,7 @@ import classNames from "classnames/bind";
 import Input from "../UI/Input";
 
 //custom hooks
-import useInput from "../../hooks/use-http";
+import useInput from "../../hooks/use-input";
 import { SecondaryButton } from "../UI/BaseButtons";
 
 //interface

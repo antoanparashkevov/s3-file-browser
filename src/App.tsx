@@ -22,120 +22,65 @@ import BaseDialog from "./components/UI/BaseDialog";
 import { awsCredentials } from "./aws/credentials";
 import { awsObjectElement } from "./aws/object";
 
-//utils
-import getObjectTree, { tree } from "./utils/getObjectTree";
+//util
+import getClient from "./util/getClient";
+import getCredentials from "./util/getCredentials";
+
+//custom hooks
+import useFetchObjects from "./hooks/use-fetch-objects";
+import useOnlineStatus from "./hooks/use-online-status";
 
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
 
-export let credentials: string | null | awsCredentials = typeof localStorage.getItem('awsCredentials') === 'string' ? JSON.parse(localStorage.getItem('awsCredentials') || '') : null;
-
-
-export let client: any;
-
-if( 
-    credentials &&
-    typeof credentials === 'object' &&
-    (credentials.accessKeyId && credentials.secretAccessKey)
-) {
-    client = new S3Client({
-        region,
-        credentials: {
-            accessKeyId: credentials.accessKeyId,
-            secretAccessKey: credentials.secretAccessKey
-        }
-    })
-}
-
-
 const App: React.FC = () => {
+    let client = getClient();
+    const credentials = getCredentials();
+    
     const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(!!client);
-    const [modifiedTree, setModifiedTree] = useState<tree>({})
     const [currentDirectory, setCurrentDirectory] = useState([])
     const [currentPrefix, setCurrentPrefix] = useState('')
     
-    useEffect(() => {
-        if( client ) {
-            fetchAllObjectsFromABucket();
-        } 
-    }, []);
+    const isOnline = useOnlineStatus()
+    
+    const fetchAllObjectsFromABucket = () => {
+        console.log('fetching all objects from a bucket...')
+    }
+    
+    const fetchObjectsFromSomePrefix = (absolutePath: string) => {
+        console.log('fetch objects from some prefix...')
+        console.log('absolutePath >>> ', absolutePath)
+    }
+    
+    const {
+        data: allObjects,
+        isLoading: loadingAllObjects,
+        error: errorAllObjects,
+        resetError: resetErrorAllObjects,
+    } = useFetchObjects();
     
     const handleEnteredCredentials = (data: awsCredentials) => {
         setHasLoggedIn(true)
         
         localStorage.setItem('awsCredentials', JSON.stringify(data))
         
-        //Update the S3 client with the new credentials
-        client = new S3Client({
-            region,
-            credentials: {
-                accessKeyId: data.accessKeyId,
-                secretAccessKey:data.secretAccessKey
-            }
-        })
+        if(!client) {
+            //Update the S3 client with the new credentials
+            client = new S3Client({
+                region,
+                credentials: {
+                    accessKeyId: data.accessKeyId,
+                    secretAccessKey:data.secretAccessKey
+                }
+            })
+        }
         
         console.log('client >>> ', client)
-    }
-    
-    const fetchAllObjectsFromABucket = async () => {
-        try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
-                const params = {
-                    Bucket: credentials.bucketName
-                }
-                const command = new ListObjectsV2Command(params)
-                const response = await client.send(command)
-                
-                console.log('response from fetching objects from a bucket >>>', response)
-                
-                if( response.$metadata.httpStatusCode === 200 && response.Contents ) {
-                    setModifiedTree(getObjectTree(response.Contents.map((k: awsObjectElement) => k.Key)))
-                    setCurrentDirectory(response.Contents.map((k: awsObjectElement) => k.Key))
-                }
-                
-            } else {
-                setHasLoggedIn(false);
-                throw new Error("An error occurred while fetching objects");
-            }
-        } catch (error) {
-            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
-        }
-    }
-    
-    const fetchObjectsFromSomePrefix = async (absolutePath: string) => {
-        console.log('absolutePath >>> ', absolutePath)
-        if(!absolutePath.endsWith('/')) {
-            absolutePath = absolutePath + '/'
-        }
-        try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
-                const params = {
-                    Bucket: credentials.bucketName,
-                    Prefix: absolutePath
-                }
-                const command = new ListObjectsV2Command(params)
-                const response = await client.send(command)
-                
-                console.log('response from fetching objects from some prefix >>> ', response)
-                if( response.Contents ) {
-                    setCurrentDirectory(response.Contents.map((k: awsObjectElement) => k.Key.replace(absolutePath, '').split('/')[0]))
-                    setCurrentPrefix(absolutePath)
-                } else {
-                    setCurrentDirectory([])
-                }
-                
-            } else {
-                setHasLoggedIn(false);
-                throw new Error("An error occurred while fetching objects");
-            }
-        } catch (error) {
-            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
-        }
     }
     
     const createObject = async () => {
         
         try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName) {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName && client) {
                 
                 const params = {
                     Bucket: credentials.bucketName,
@@ -156,7 +101,7 @@ const App: React.FC = () => {
     const getObjectData = async () => {
 
         try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
                 
                 const params = {
                     Bucket: credentials.bucketName,
@@ -167,7 +112,10 @@ const App: React.FC = () => {
                 
                 console.log('response from getting object data >>> ', response)
                 
-                const objectTextData = await response.Body.transformToString();
+                let objectTextData;
+                if( response.Body ) {
+                    objectTextData = await response.Body.transformToString();
+                }
                 
                 console.log('objectTextData from getting object data >>> ', objectTextData)
                 
@@ -183,7 +131,7 @@ const App: React.FC = () => {
     const deleteObject = async () => {
         
         try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
                 const params = {
                     Bucket: credentials.bucketName,
                     Key: 'prefix/subprefix/object.txt'
@@ -210,24 +158,33 @@ const App: React.FC = () => {
                         <SubmitForm onSaveData={handleEnteredCredentials} />
                     </BaseDialog> :
                     <Fragment>
-                        <section className={styles['tree_view']}>
-                            {Object.keys(modifiedTree).map(node => {
-                                return (
-                                    <DirectoryTree
-                                        key={node}
-                                        tree={modifiedTree[node]}
-                                        name={node}
-                                        absolutePath={node + '/'}
-                                        onDoubleClick={fetchObjectsFromSomePrefix}
-                                    />
-                                )
-                            })}
-                        </section>
+                        {loadingAllObjects ? 'loading...' :
+                            <Fragment>
+                                {
+                                    allObjects ?
+                                        <section className={styles['tree_view']}>
+                                            {Object.keys(allObjects).map(node => {
+                                                return (
+                                                    <DirectoryTree
+                                                        key={node}
+                                                        tree={allObjects[node]}
+                                                        name={node}
+                                                        absolutePath={node + '/'}
+                                                        onDoubleClick={fetchObjectsFromSomePrefix}
+                                                    />
+                                                )
+                                            })}
+                                        </section> :
+                                        <p>No Data</p>
+                                }
+                            </Fragment>
+                        }
                         <CurrentDirectory onChangeFolder={fetchObjectsFromSomePrefix} currentDirectory={currentDirectory} currentPrefix={currentPrefix} />
                     </Fragment>
                 }
             </section>
             <br/>
+            <span>isOnline {isOnline.toString()}</span>
             <button onClick={fetchAllObjectsFromABucket}>Fetch all objects from a bucket</button>
             <button onClick={fetchObjectsFromSomePrefix.bind(this, 'prefix/subprefix')}>Fetch objects from some prefix</button>
             <button onClick={createObject}>create object</button>

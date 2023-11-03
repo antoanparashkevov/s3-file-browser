@@ -5,8 +5,8 @@ import styles from './CurrentDirectory.module.scss';
 import CurrentDirectoryActions from "./CurrentDirectoryActions";
 import CurrentDirectoryView from "./CurrentDirectoryView";
 
-//utils
-import getCurrDirectoryView from "../../utils/getCurrDirectoryView";
+//util
+import getCurrDirectoryView from "../../util/getCurrDirectoryView";
 
 interface CurrentDirectoryProps {//TODO remove question marks when we build the UI
     currentDirectory: string[],

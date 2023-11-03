@@ -2,12 +2,14 @@ import styles from "./CurrentDirectoryViewItem.module.scss";
 import React, { Fragment, useState } from "react";
 import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
-//credentials
-import { credentials, client } from "../../App";
 
 //UI components
 import BaseDialog from "../UI/BaseDialog";
 import Dropdown, { dropdownItem } from "../UI/Dropdown";
+
+//util
+import getCredentials from "../../util/getCredentials";
+import getClient from "../../util/getClient";
 
 const dropdownItems = [
     {
@@ -26,16 +28,19 @@ interface CurrentDirectoryViewItemInterface {
 const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
     {name, isFolder, currentPrefix, onChangeFolder}
 ) => {
+    const credentials = getCredentials();
+    const client = getClient();
+    
     const [fileContent, setFileContent] = useState<string>('')
     const [openFilePreview, setOpenFilePreview] = useState<boolean>(false);
     const [openDropdown, setOpenDropdown] = useState<boolean>(false)
     
-    const handleDoubleClick = async (event: any) => {
+    const handleDoubleClick = async () => {
         
         //when we click on a file
         if( !isFolder ) {
             try {
-                if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
                     
                     const params = {
                         Bucket: credentials.bucketName,
@@ -46,7 +51,10 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                     
                     console.log('response from getting object data >>> ', response)
                     
-                    const objectTextData = await response.Body.transformToString();
+                    let objectTextData;
+                    if( response.Body ) {
+                        objectTextData = await response.Body.transformToString();
+                    }
                     
                     if( objectTextData ) {
                         setOpenFilePreview(true)
@@ -92,7 +100,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
     
     const deleteItem = async () => {
         try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
                 const params = {
                     Bucket: credentials.bucketName,
                     Key: currentPrefix + name

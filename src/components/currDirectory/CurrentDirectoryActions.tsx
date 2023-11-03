@@ -1,4 +1,5 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useState } from "react";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import styles from "./CurrentDirectoryActions.module.scss";
 import classNames from "classnames/bind";
 
@@ -6,10 +7,12 @@ import classNames from "classnames/bind";
 import { Button, SecondaryButton } from "../UI/BaseButtons";
 import BaseDialog from "../UI/BaseDialog";
 import Input from "../UI/Input";
-import useInput from "../../hooks/use-http";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { client, credentials } from "../../App";
+import useInput from "../../hooks/use-input";
 import TextArea from "../UI/TextArea";
+
+//util
+import getCredentials from "../../util/getCredentials";
+import getClient from "../../util/getClient";
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +24,9 @@ interface CurrentDirectoryActionsInterface {
 const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
     {currentPrefix, onPrevAction}
 ) => {
+    const credentials = getCredentials();
+    const client = getClient();
+    
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [isFolder, setIsFolder] = useState<boolean>(true)
     
@@ -57,7 +63,7 @@ const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
         if( nameIsValid ) {
             console.log('enteredName >>> ', enteredName)
             try {
-                if( credentials && typeof credentials === 'object' && credentials.bucketName) {
+                if( credentials && typeof credentials === 'object' && credentials.bucketName && client) {
                     
                     const params:{Bucket: string, Key: string, Body?: string} = {
                         Bucket: credentials.bucketName,

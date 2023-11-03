@@ -5,7 +5,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import DirectoryTreeItem from "./DirectoryTreeItem";
 
 //interfaces
-import { tree } from "../../utils/getObjectTree";
+import { tree } from "../../util/getObjectTree";
 
 interface DirectoryTreeProps {//TODO remove question marks when we build the UI
     tree: tree,
