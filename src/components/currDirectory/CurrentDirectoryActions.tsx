@@ -127,8 +127,6 @@ const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
                                 <TextArea 
                                     id="file" 
                                     name="fileContent"
-                                    cols={33}
-                                    rows={10}
                                     value={enteredFileContent}
                                     onChange={fileContentChangeHandler}
                                     onBlur={fileContentBlurHandler}

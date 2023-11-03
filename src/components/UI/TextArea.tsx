@@ -5,7 +5,7 @@ interface AttrsInterface {
     cols?: number
 }
 
-const TextArea = styled.textarea.attrs(({rows = 25, cols = 10}: AttrsInterface) => ({
+const TextArea = styled.textarea.attrs(({rows = 10, cols = 33}: AttrsInterface) => ({
     rows,
     cols
 }))`
