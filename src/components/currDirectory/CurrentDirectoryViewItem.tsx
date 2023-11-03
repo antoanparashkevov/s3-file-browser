@@ -4,7 +4,17 @@ import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
 //credentials
 import { credentials, client } from "../../App";
+
+//UI components
 import BaseDialog from "../UI/BaseDialog";
+import Dropdown, { dropdownItem } from "../UI/Dropdown";
+
+const dropdownItems = [
+    {
+        name: "Delete",
+        code: "delete"
+    }
+]
 
 interface CurrentDirectoryViewItemInterface {
     name: string,
@@ -70,28 +80,33 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         }
     }
     
-    const deleteFile = async () => {
-        if( !isFolder ) {
-            console.log('currentPrefix >>> ', currentPrefix);
-            console.log('name >>> ', name)
-            
-            try {
-                if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
-                    const params = {
-                        Bucket: credentials.bucketName,
-                        Key: currentPrefix + name
-                    }
-                    const command = new DeleteObjectCommand(params)
-                    const response = await client.send(command)
-                    
-                    console.log('response from deleting an object >>> ', response)
-                    
-                } else {
-                    throw new Error("An error occurred while fetching objects");
+    const handleSelectedItem = async (selectedItem: dropdownItem) => {
+        console.log('selectedItem >>> ', selectedItem)
+        
+        switch (selectedItem.code) {
+            case 'delete':
+                await deleteItem()
+            break;
+        }
+    }
+    
+    const deleteItem = async () => {
+        try {
+            if( credentials && typeof credentials === 'object' && credentials.bucketName ) {
+                const params = {
+                    Bucket: credentials.bucketName,
+                    Key: currentPrefix + name
                 }
-            } catch (error) {
-                console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
+                const command = new DeleteObjectCommand(params)
+                const response = await client.send(command)
+                
+                console.log('response from deleting an object >>> ', response)
+                
+            } else {
+                throw new Error("An error occurred while fetching objects");
             }
+        } catch (error) {
+            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
         }
     }
     
@@ -104,20 +119,17 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                     width={80}
                     height={80}
                 />
-                {name}
+                <span>{name}</span>
+                {openDropdown &&
+                    <Dropdown dropdownItems={dropdownItems} onSelectedItem={handleSelectedItem} />
+                }
             </div>
             {fileContent && openFilePreview &&
                 <BaseDialog onClose={handleCloseTextPreview}>
                     {fileContent}
                 </BaseDialog>
             }
-            {openDropdown && 
-                <div>
-                    <ul>
-                        <li onClick={deleteFile}>Delete</li>
-                    </ul>
-                </div>
-            }
+            
         </Fragment>
     )
 }
