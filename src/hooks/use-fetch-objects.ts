@@ -12,7 +12,7 @@ interface ParamsInterface {
 }
 
 const useFetchObjects = (prefix?: string) => {
-    const [data, setData] = useState<{[index: string]: {}} | null>(null);
+    const [data, setData] = useState<string[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     
@@ -25,6 +25,7 @@ const useFetchObjects = (prefix?: string) => {
     
     useEffect(() => {
         console.log('DEBUG: Fetching objects ...')
+        console.log('DEBUG: prefix >>> ', prefix)
         if( credentials && typeof credentials === 'object' && client ) {
             let params: ParamsInterface = {
                 Bucket: credentials.bucketName
@@ -47,7 +48,7 @@ const useFetchObjects = (prefix?: string) => {
                         })
                         console.log('DEBUG: modifiedResponse >>> ', modifiedResponse)
                         
-                        setData(getObjectTree(modifiedResponse));
+                        setData(modifiedResponse);
                     } 
                     
                     if( response.$metadata.httpStatusCode === 204 ) {

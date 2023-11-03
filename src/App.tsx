@@ -29,6 +29,7 @@ import getCredentials from "./util/getCredentials";
 //custom hooks
 import useFetchObjects from "./hooks/use-fetch-objects";
 import useOnlineStatus from "./hooks/use-online-status";
+import getObjectTree from "./util/getObjectTree";
 
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
 
@@ -37,8 +38,7 @@ const App: React.FC = () => {
     const credentials = getCredentials();
     
     const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(!!client);
-    const [currentDirectory, setCurrentDirectory] = useState([])
-    const [currentPrefix, setCurrentPrefix] = useState('')
+    const [currentPrefix, setCurrentPrefix] = useState('');
     
     const isOnline = useOnlineStatus()
     
@@ -163,11 +163,11 @@ const App: React.FC = () => {
                                 {
                                     allObjects ?
                                         <section className={styles['tree_view']}>
-                                            {Object.keys(allObjects).map(node => {
+                                            {Object.keys(getObjectTree(allObjects)).map(node => {
                                                 return (
                                                     <DirectoryTree
                                                         key={node}
-                                                        tree={allObjects[node]}
+                                                        tree={getObjectTree(allObjects)[node]}
                                                         name={node}
                                                         absolutePath={node + '/'}
                                                         onDoubleClick={fetchObjectsFromSomePrefix}
@@ -179,12 +179,16 @@ const App: React.FC = () => {
                                 }
                             </Fragment>
                         }
-                        <CurrentDirectory onChangeFolder={fetchObjectsFromSomePrefix} currentDirectory={currentDirectory} currentPrefix={currentPrefix} />
+                        <CurrentDirectory 
+                            onChangeFolder={fetchObjectsFromSomePrefix} 
+                            currentPrefix={currentPrefix} 
+                        />
                     </Fragment>
                 }
             </section>
             <br/>
             <span>isOnline {isOnline.toString()}</span>
+            <button onClick={() => setCurrentPrefix('prefix/subprefix')}>Get prefix only</button>
             <button onClick={fetchAllObjectsFromABucket}>Fetch all objects from a bucket</button>
             <button onClick={fetchObjectsFromSomePrefix.bind(this, 'prefix/subprefix')}>Fetch objects from some prefix</button>
             <button onClick={createObject}>create object</button>

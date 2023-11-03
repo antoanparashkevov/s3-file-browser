@@ -5,37 +5,57 @@ import classNames from "classnames/bind";
 //currDir
 import CurrentDirectoryViewItem from "./CurrentDirectoryViewItem";
 import currentDirectory from "./CurrentDirectory";
+import useFetchObjects from "../../hooks/use-fetch-objects";
+import getCurrDirectoryView from "../../util/getCurrDirectoryView";
 
 const cx = classNames.bind(styles)
 
 interface CurrentDirectoryViewInterface {
-    modifiedDirectoryItems: string[],
     currentPrefix: string,
     onChangeFolder: (absolutePath: string) => void
 }
 
 const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
-    {modifiedDirectoryItems, currentPrefix, onChangeFolder}
+    {
+        currentPrefix,
+        onChangeFolder
+    }
 ) => {
+    
+    const {
+        data: allObjectsFromPrefix,
+        isLoading: loadingAllObjectsFromPrefix,
+        error: errorAllObjectsFromPrefix,
+        resetError: resetErrorAllObjectsFromPrefix,
+    } = useFetchObjects(currentPrefix);
     
     return (
         <div className={styles['current_directory_view']}>
-            <div className={cx("current_directory_view_grid", {"current_directory_view_grid_no_data": modifiedDirectoryItems.length === 0})}>
-                {modifiedDirectoryItems.length > 0 ?
+            <div 
+                className={cx(
+                    "current_directory_view_grid",
+                    {"current_directory_view_grid_no_data": !allObjectsFromPrefix || allObjectsFromPrefix.length === 0}
+                )}
+            >
+                {loadingAllObjectsFromPrefix ? 'loading' :
                     <Fragment>
-                        {modifiedDirectoryItems.map(item => {
-                            return (
-                                <CurrentDirectoryViewItem 
-                                    onChangeFolder={(absolutePath) => onChangeFolder(absolutePath)}
-                                    key={item} 
-                                    currentPrefix={currentPrefix} 
-                                    name={item}
-                                    isFolder={!item.includes('.txt')} 
-                                />
-                            )
-                        })}
-                    </Fragment> :
-                    <p>No Files and Folders</p>
+                        {allObjectsFromPrefix ?
+                            <Fragment>
+                                {getCurrDirectoryView(allObjectsFromPrefix).map(item => {
+                                    return (
+                                        <CurrentDirectoryViewItem
+                                            onChangeFolder={(absolutePath) => onChangeFolder(absolutePath)}
+                                            key={item}
+                                            currentPrefix={currentPrefix}
+                                            name={item}
+                                            isFolder={!item.includes('.txt')}
+                                        />
+                                    )
+                                })}
+                            </Fragment> :
+                            <p>No files and folders</p>
+                        }
+                    </Fragment>
                 }
             </div>
         </div>

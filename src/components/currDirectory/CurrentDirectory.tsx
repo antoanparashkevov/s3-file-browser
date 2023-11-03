@@ -5,28 +5,29 @@ import styles from './CurrentDirectory.module.scss';
 import CurrentDirectoryActions from "./CurrentDirectoryActions";
 import CurrentDirectoryView from "./CurrentDirectoryView";
 
-//util
-import getCurrDirectoryView from "../../util/getCurrDirectoryView";
-
 interface CurrentDirectoryProps {//TODO remove question marks when we build the UI
-    currentDirectory: string[],
     currentPrefix: string,
     onChangeFolder: (absolutePath: string) => void
 }
 
 const CurrentDirectory: React.FC<CurrentDirectoryProps> = (
-    {currentDirectory, currentPrefix, onChangeFolder}
+    {currentPrefix, onChangeFolder}
 ) => {
-    const [modifiedDirectoryItems, setModifiedDirectoryItems] = useState<string[]>([])
-    
-    useEffect(() => {
-        setModifiedDirectoryItems(getCurrDirectoryView(currentDirectory))
-    }, [currentDirectory]);
     
     return (
         <section className={styles['current_directory']}>
-            <CurrentDirectoryActions onPrevAction={(changedPrefix) => onChangeFolder(changedPrefix)} currentPrefix={currentPrefix}/>
-            <CurrentDirectoryView onChangeFolder={(absolutePath) => onChangeFolder(absolutePath)} currentPrefix={currentPrefix} modifiedDirectoryItems={modifiedDirectoryItems} />
+            <CurrentDirectoryActions 
+                onPrevAction={
+                    (changedPrefix) => onChangeFolder(changedPrefix)
+                } 
+                currentPrefix={currentPrefix}
+            />
+            <CurrentDirectoryView 
+                onChangeFolder={
+                    (absolutePath) => onChangeFolder(absolutePath)
+                } 
+                currentPrefix={currentPrefix}
+            />
         </section>
     )
 };
