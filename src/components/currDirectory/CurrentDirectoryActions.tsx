@@ -9,6 +9,7 @@ import Input from "../UI/Input";
 import useInput from "../../hooks/use-http";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { client, credentials } from "../../App";
+import TextArea from "../UI/TextArea";
 
 const cx = classNames.bind(styles);
 
@@ -123,10 +124,10 @@ const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
                         {!isFolder &&
                             <div className={cx('form_control', {'invalid': fileContentHasError})}>
                                 <label htmlFor="file">Enter file content</label>
-                                <textarea 
+                                <TextArea 
                                     id="file" 
                                     name="fileContent"
-                                    cols={30}
+                                    cols={33}
                                     rows={10}
                                     value={enteredFileContent}
                                     onChange={fileContentChangeHandler}
