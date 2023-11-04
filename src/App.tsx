@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, Fragment, useLayoutEffect } from 'react';
 import styles from './App.module.scss';
 
 //aws-sdk
@@ -32,7 +32,8 @@ import useOnlineStatus from "./hooks/use-online-status";
 import getObjectTree from "./util/getObjectTree";
 
 //redux
-import { authActions, Store } from "./store";
+import { State } from "./store";
+import { authActions } from "./store/authSlice";
 import { useSelector, useDispatch } from 'react-redux';
 
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
@@ -46,7 +47,7 @@ const App: React.FC = () => {
     const isOnline = useOnlineStatus()//TODO use a tooltip that indicates the network status of the user
     
     //redux
-    const authState = useSelector((state: Store) => state.auth);
+    const authState = useSelector((state: State) => state.auth);
     const dispatch = useDispatch();
     
     //state
@@ -59,7 +60,7 @@ const App: React.FC = () => {
         resetError: resetErrorAllObjects,
     } = useFetchObjects();
     
-    useEffect(() => {
+    useLayoutEffect(() => {
         if(!credentials) {
             dispatch(authActions.logout())
         } else {
@@ -175,7 +176,7 @@ const App: React.FC = () => {
     return (
         <Fragment>
             <section className={styles["root_section"]}>
-                {!authState.hasLoggedIn ?
+                {!authState.isAuthenticated ?
                     <BaseDialog title='Enter your S3 Credentials'>
                         <SubmitForm onSaveData={handleEnteredCredentials} />
                     </BaseDialog> 
