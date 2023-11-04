@@ -5,32 +5,12 @@ import styles from './CurrentDirectory.module.scss';
 import CurrentDirectoryActions from "./CurrentDirectoryActions";
 import CurrentDirectoryView from "./CurrentDirectoryView";
 
-interface CurrentDirectoryProps {//TODO remove question marks when we build the UI
-    currentPrefix: string,
-    onChangeFolder: (absolutePath: string) => void
-}
-
-const CurrentDirectory: React.FC<CurrentDirectoryProps> = (
-    {
-        currentPrefix,
-        onChangeFolder
-    }
-) => {
+const CurrentDirectory: React.FC = () => {
     
     return (
         <section className={styles['current_directory']}>
-            <CurrentDirectoryActions 
-                onPrevAction={
-                    (changedPrefix) => onChangeFolder(changedPrefix)
-                } 
-                currentPrefix={currentPrefix}
-            />
-            <CurrentDirectoryView 
-                onChangeFolder={
-                    (absolutePath) => onChangeFolder(absolutePath)
-                } 
-                currentPrefix={currentPrefix}
-            />
+            <CurrentDirectoryActions />
+            <CurrentDirectoryView />
         </section>
     )
 };

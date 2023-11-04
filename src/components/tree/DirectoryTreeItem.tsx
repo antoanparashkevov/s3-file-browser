@@ -12,7 +12,6 @@ interface DirectoryTreeItemProps {
     directoryName: string,
     hasSubDirectories?: boolean,
     onExpandSubDirectories?: (isExpanded: boolean) => void,
-    onDoubleClick: (absolutePath: string) => void,
     absolutePath: string
 }
 
@@ -21,7 +20,6 @@ const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
         directoryName,
         hasSubDirectories = false,
         onExpandSubDirectories,
-        onDoubleClick,
         absolutePath
     }
 ) => {
@@ -32,7 +30,6 @@ const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
     
     const handleDoubleClick = (e: BaseSyntheticEvent) => {
         e.stopPropagation();
-        onDoubleClick(absolutePath)
         dispatch(awsActions.changeAbsolutePath(absolutePath));
     }
     

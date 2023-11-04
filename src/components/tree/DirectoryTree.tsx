@@ -10,7 +10,6 @@ import { tree } from "../../util/getObjectTree";
 interface DirectoryTreeProps {//TODO remove question marks when we build the UI
     tree: tree,
     name: string,
-    onDoubleClick: (directoryName: string) => void,
     absolutePath: string
 }
 
@@ -19,24 +18,18 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = (
     {
         tree,
         name,
-        onDoubleClick,
         absolutePath
     }
 ) => {
     const [expandSubDir, setExpandSubDir] = useState<boolean>(false);
     const keys: string[] = Object.keys(tree);
 
-    const handleDoubleClick = (absolutePath: string) => {
-        onDoubleClick(absolutePath)
-    }
-    
     return (
         <ul role='list' className={styles['tree_view_list']}>
             {keys.length === 0 ?//a folder without sub folders
                 <DirectoryTreeItem 
                     absolutePath={absolutePath}
                     directoryName={name} 
-                    onDoubleClick={handleDoubleClick}
                 /> :
                  (
                     <Fragment>
@@ -48,12 +41,15 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = (
                                             directoryName={name}
                                             absolutePath={absolutePath}
                                             hasSubDirectories={keys.length > 0}
-                                            onDoubleClick={handleDoubleClick}
                                             onExpandSubDirectories={(isExpanded) => setExpandSubDir(isExpanded)}
                                         />
                                     }
                                     {expandSubDir &&//when we have at least one sub folder, we want to call the entire component recursively
-                                        <DirectoryTree tree={tree[key]} name={key} absolutePath={absolutePath + key + '/'} onDoubleClick={handleDoubleClick} />
+                                        <DirectoryTree 
+                                            tree={tree[key]} 
+                                            name={key} 
+                                            absolutePath={absolutePath + key + '/'} 
+                                        />
                                     }
                                 </Fragment>
                             )

@@ -13,17 +13,7 @@ import { State } from "../../store";
 
 const cx = classNames.bind(styles)
 
-interface CurrentDirectoryViewInterface {
-    currentPrefix: string,
-    onChangeFolder: (absolutePath: string) => void
-}
-
-const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
-    {
-        currentPrefix,
-        onChangeFolder
-    }
-) => {
+const CurrentDirectoryView: React.FC = () => {
     const awsState = useSelector((state:State) => state.aws);
     
     const {
@@ -45,12 +35,10 @@ const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
                     <Fragment>
                         {allObjectsFromPrefix ?
                             <Fragment>
-                                {getCurrDirectoryView(allObjectsFromPrefix).map(item => {
+                                {getCurrDirectoryView(allObjectsFromPrefix, awsState.absolutePath).map(item => {
                                     return (
                                         <CurrentDirectoryViewItem
-                                            onChangeFolder={(absolutePath) => onChangeFolder(absolutePath)}
                                             key={item}
-                                            currentPrefix={currentPrefix}
                                             name={item}
                                             isFolder={!item.includes('.txt')}
                                         />

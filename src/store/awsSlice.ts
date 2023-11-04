@@ -19,7 +19,6 @@ const awsSlice = createSlice({
     initialState: initialAwsState,
     reducers: {
         changeAbsolutePath(state: AwsState, action: { payload: string }) {
-            state.prevAbsolutePath = state.absolutePath;
             state.absolutePath = action.payload;
         },
         changeCurrentDirectory(state: AwsState, action: {payload: string}) {

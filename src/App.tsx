@@ -192,7 +192,6 @@ const App: React.FC = () => {
                                                         tree={getObjectTree(allObjects)[node]}
                                                         name={node}
                                                         absolutePath={node + '/'}
-                                                        onDoubleClick={fetchObjectsFromSomePrefix}
                                                     />
                                                 )
                                             })}
@@ -201,10 +200,7 @@ const App: React.FC = () => {
                                 }
                             </Fragment>
                         }
-                        <CurrentDirectory 
-                            onChangeFolder={fetchObjectsFromSomePrefix} 
-                            currentPrefix={currentPrefix} 
-                        />
+                        <CurrentDirectory/>
                     </Fragment>
                 }
             </section>

@@ -14,24 +14,23 @@ import TextArea from "../UI/TextArea";
 import getCredentials from "../../util/getCredentials";
 import getClient from "../../util/getClient";
 
+//redux
+import { useDispatch, useSelector } from "react-redux";
+import { State } from "../../store";
+import { awsActions } from "../../store/awsSlice";
+
 const cx = classNames.bind(styles);
 
-interface CurrentDirectoryActionsInterface {
-    currentPrefix: string,
-    onPrevAction: (changedPrefix: string) => void
-}
-
-const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
-    {
-        currentPrefix,
-        onPrevAction
-    }
-) => {
+const CurrentDirectoryActions:React.FC = () => {
     const credentials = getCredentials();
     const client = getClient();
     
     const [openDialog, setOpenDialog] = useState<boolean>(false);
-    const [isFolder, setIsFolder] = useState<boolean>(true)
+    const [isFolder, setIsFolder] = useState<boolean>(true);
+    
+    //redux
+    const awsState = useSelector((state: State) => state.aws);
+    const dispatch = useDispatch();
     
     const {
         value: enteredName,
@@ -70,7 +69,7 @@ const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
                     
                     const params:{Bucket: string, Key: string, Body?: string} = {
                         Bucket: credentials.bucketName,
-                        Key: currentPrefix + enteredName + (!isFolder ? '.txt' : ''),
+                        Key: awsState.absolutePath + enteredName + (!isFolder ? '.txt' : ''),
                     }
                     
                     if(!isFolder && enteredFileContent && fileContentIsValid ) {
@@ -96,8 +95,19 @@ const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
     }
     
     const handlePrevAction = () => {
-        console.log('currentPrefix (prevAction) >>> ', currentPrefix)
-        // onPrevAction(currentPrefix)
+        console.log('previous arrow clicked...')
+        //building absolute path without a slash at the end
+        const currentAbsolutePath =
+            awsState.absolutePath.endsWith('/') ?
+                awsState.absolutePath.slice(0, -1) :
+                awsState.absolutePath
+        
+        //dispatching previous absolute path, so we cut the last fragment and again add a slash at the end
+        let newCurrentAbsolutePath = currentAbsolutePath.split('/').slice(0,-1).join('/').length === 1 ?
+            currentAbsolutePath.split('/').slice(0,-1).join('') :
+            currentAbsolutePath.split('/').slice(0,-1).join('/')
+        
+        dispatch(awsActions.changeAbsolutePath(newCurrentAbsolutePath));
     }
     
     return (
@@ -106,9 +116,6 @@ const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
                 <div className={styles['current_directory_actions_navigate']}>
                     <div className={cx("arrow_wrapper", "arrow_prev")} onClick={handlePrevAction}>
                         <img src="/icons/arrow.svg" alt="Prev Icon" width={24} height={24}/>
-                    </div>
-                    <div className={cx("arrow_wrapper", "arrow_next")}>
-                        <img src="/icons/arrow.svg" alt="Next Icon" width={24} height={24}/>
                     </div>
                 </div>
                 <div className={styles['current_directory_actions_buttons']}>

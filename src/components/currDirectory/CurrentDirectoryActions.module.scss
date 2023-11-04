@@ -27,10 +27,6 @@
     }
 }
 
-.arrow_next img {
-    transform: rotate(180deg);
-}
-
 .current_directory_actions_buttons {
     @include mixins.flexbox('center', 'center', 'row nowrap');
     column-gap: 15px;

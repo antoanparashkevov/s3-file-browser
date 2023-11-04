@@ -19,10 +19,6 @@ const useFetchObjects = (prefix?: string) => {
     const credentials = getCredentials();
     const client = getClient();
     
-    if(prefix && !prefix?.endsWith('/')) {
-        prefix += '/'
-    }
-    
     useEffect(() => {
         // console.log('DEBUG: Fetching objects ...')
         // console.log('DEBUG: prefix >>> ', prefix)
@@ -42,13 +38,18 @@ const useFetchObjects = (prefix?: string) => {
             client.send(command)
                 .then((response: ListObjectsV2CommandOutput) => {
                     // console.log('DEBUG: response >>> ', response)
-                    if( response.$metadata.httpStatusCode === 200 && response.Contents ) {
-                        let modifiedResponse = response.Contents.map(object => {
-                            return object.Key ?? ''
-                        })
-                        // console.log('DEBUG: modifiedResponse >>> ', modifiedResponse)
+                    if( response.$metadata.httpStatusCode === 200 ) {
                         
-                        setData(modifiedResponse);
+                        if( response.Contents ) {
+                            let modifiedResponse = response.Contents.map(object => {
+                                return object.Key ?? ''
+                            })
+                            // console.log('DEBUG: modifiedResponse >>> ', modifiedResponse)
+                            
+                            setData(modifiedResponse);
+                        } else {
+                            setData(null)
+                        }
                     } 
                     
                     if( response.$metadata.httpStatusCode === 204 ) {

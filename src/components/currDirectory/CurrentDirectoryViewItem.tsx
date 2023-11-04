@@ -14,22 +14,19 @@ import getClient from "../../util/getClient";
 import dropdownItems from "../../data/dropdownItems";
 
 //redux
-import { useDispatch } from "react-redux";
-import { awsActions } from "../../store/awsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import awsSlice, { awsActions } from "../../store/awsSlice";
+import { State } from "../../store";
 
 interface CurrentDirectoryViewItemInterface {
     name: string,
     isFolder: boolean,
-    currentPrefix: string,
-    onChangeFolder: (absolutePath: string) => void
 }
 
 const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
     {
         name,
         isFolder,
-        currentPrefix,
-        onChangeFolder
     }
 ) => {
     const credentials = getCredentials();
@@ -39,6 +36,8 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
     const [openFilePreview, setOpenFilePreview] = useState<boolean>(false);
     const [openDropdown, setOpenDropdown] = useState<boolean>(false);
     
+    //redux
+    const awsState = useSelector((state: State) => state.aws);
     const dispatch = useDispatch();
     
     const handleDoubleClick = async () => {
@@ -50,7 +49,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                     
                     const params = {
                         Bucket: credentials.bucketName,
-                        Key: currentPrefix + name
+                        Key: awsState.absolutePath + name
                     }
                     const command = new GetObjectCommand(params)
                     const response = await client.send(command)
@@ -77,9 +76,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         }
         //when we click on a folder
         else if( isFolder ) { 
-            console.log('absolute path >>> ', currentPrefix + name)
-            onChangeFolder(currentPrefix + name)
-            dispatch(awsActions.changeAbsolutePath(currentPrefix + name))
+            dispatch(awsActions.changeAbsolutePath((awsState.absolutePath) + name + '/'))
         }
     }
     
@@ -110,7 +107,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
             if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
                 const params = {
                     Bucket: credentials.bucketName,
-                    Key: currentPrefix + name
+                    Key: awsState.absolutePath + name
                 }
                 const command = new DeleteObjectCommand(params)
                 const response = await client.send(command)
