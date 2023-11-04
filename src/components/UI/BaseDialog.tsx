@@ -17,14 +17,14 @@ const Backdrop = styled.div`
 `;
 
 const ModalOverlay = (
-    {children, title}:
-        {children: ReactNode, title?: string}
+    {children, title, status = 'success'}:
+        {children: ReactNode, title?: string, status?: string}
 ) => {
     
     return (
         <dialog open className={cx("dialog")}>
             {title && 
-                <header className={cx("dialog_header")}>
+                <header className={cx("dialog_header", status)}>
                     <h1>{title}</h1>
                 </header>
             }
@@ -36,8 +36,8 @@ const ModalOverlay = (
 }
 
 const BaseDialog = (
-    { children, title, onClose }:
-        { children: ReactNode, title?: string, onClose?: (shouldClose: boolean) => void }
+    { children, title, onClose, status = 'success' }:
+        { children: ReactNode, title?: string, onClose?: (shouldClose: boolean) => void, status?: string }
 ) => {
     return (
         <Fragment>
@@ -50,7 +50,7 @@ const BaseDialog = (
                 document.getElementById('backdrop-root') as HTMLDivElement)
             }
             {createPortal(
-                <ModalOverlay title={title}>{children}</ModalOverlay>,
+                <ModalOverlay title={title} status={status}>{children}</ModalOverlay>,
                 document.getElementById('overlay-root') as HTMLDialogElement)
             }
         </Fragment>

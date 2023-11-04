@@ -14,6 +14,7 @@ import SubmitForm from "./components/submit/SubmitForm";
 //UI components
 import BaseDialog from "./components/UI/BaseDialog";
 import Notification from "./components/UI/Notification";
+import { Button } from "./components/UI/BaseButtons";
 
 //interfaces
 import { awsCredentials } from "./aws/credentials";
@@ -96,6 +97,11 @@ const App: React.FC = () => {
     return (
         <Fragment>
             <section className={styles["root_section"]} onClick={() => dispatch(awsActions.toggleDropdown(''))}>
+                {errorAllObjects && 
+                    <BaseDialog onClose={resetErrorAllObjects} title={errorAllObjects} status='error'>
+                        <Button onClick={() => dispatch(awsActions.fetchData())}>Try again</Button>
+                    </BaseDialog>
+                }
                 {!authState.isAuthenticated ?
                     <BaseDialog title='Enter your S3 Credentials'>
                         <SubmitForm onSaveData={handleEnteredCredentials} />
