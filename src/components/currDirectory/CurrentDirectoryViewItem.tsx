@@ -15,7 +15,7 @@ import dropdownItems from "../../data/dropdownItems";
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import awsSlice, { awsActions } from "../../store/awsSlice";
+import { awsActions } from "../../store/awsSlice";
 import { State } from "../../store";
 
 interface CurrentDirectoryViewItemInterface {
@@ -88,7 +88,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         e.preventDefault()
         
         if(!isFolder) {
-            setOpenDropdown(true)//TODO this should be handled with redux since we want to close the dropdown when we click wherever we want
+            dispatch(awsActions.toggleDropdown(name))
         }
     }
     
@@ -113,6 +113,9 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                 const response = await client.send(command)
                 
                 console.log('response from deleting an object >>> ', response)
+                if( response ) {
+                    dispatch(awsActions.toggleDropdown(''))
+                }
                 
             } else {
                 throw new Error("An error occurred while fetching objects");
@@ -132,7 +135,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                     height={80}
                 />
                 <span>{name}</span>
-                {openDropdown &&
+                {awsState.clickedCurrentDirectoryDropdownItem === name &&
                     <Dropdown dropdownItems={dropdownItems} onSelectedItem={handleSelectedItem} />
                 }
             </div>
@@ -141,7 +144,6 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                     {fileContent}
                 </BaseDialog>
             }
-            
         </Fragment>
     )
 }

@@ -4,14 +4,14 @@ export interface AwsState {
     absolutePath: string,
     prevAbsolutePath: string,
     currentDirectory: string,
-    openDeleteDropdown: boolean
+    clickedCurrentDirectoryDropdownItem: string
 }
 
 const initialAwsState: AwsState = {
     absolutePath: '',
     prevAbsolutePath: '',
     currentDirectory: 'root',
-    openDeleteDropdown: false
+    clickedCurrentDirectoryDropdownItem: ''
 }
 
 const awsSlice = createSlice({
@@ -24,8 +24,8 @@ const awsSlice = createSlice({
         changeCurrentDirectory(state: AwsState, action: {payload: string}) {
             state.currentDirectory = action.payload;
         },
-        toggleDropdown(state: AwsState, action: {payload: boolean}) {
-            state.openDeleteDropdown = action.payload;
+        toggleDropdown(state: AwsState, action: {payload: string}) {
+            state.clickedCurrentDirectoryDropdownItem = action.payload;
         }
     }
 });

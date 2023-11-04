@@ -96,6 +96,7 @@ const CurrentDirectoryActions:React.FC = () => {
     
     const handlePrevAction = () => {
         console.log('previous arrow clicked...')
+        
         //building absolute path without a slash at the end
         const currentAbsolutePath =
             awsState.absolutePath.endsWith('/') ?

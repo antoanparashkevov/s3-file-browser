@@ -1,12 +1,9 @@
-import React, { useState, Fragment, useLayoutEffect } from 'react';
+import React, { Fragment, useLayoutEffect } from 'react';
 import styles from './App.module.scss';
 
 //aws-sdk
 import {
     S3Client,
-    PutObjectCommand,
-    DeleteObjectCommand,
-    GetObjectCommand
 } from '@aws-sdk/client-s3';
 
 //components
@@ -30,9 +27,10 @@ import useOnlineStatus from "./hooks/use-online-status";
 import getObjectTree from "./util/getObjectTree";
 
 //redux
+import { useSelector, useDispatch } from 'react-redux';
 import { State } from "./store";
 import { authActions } from "./store/authSlice";
-import { useSelector, useDispatch } from 'react-redux';
+import { awsActions } from "./store/awsSlice";
 
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
 
@@ -47,9 +45,6 @@ const App: React.FC = () => {
     //redux
     const authState = useSelector((state: State) => state.auth);
     const dispatch = useDispatch();
-    
-    //state
-    const [currentPrefix, setCurrentPrefix] = useState('');
     
     const {
         data: allObjects,
@@ -88,92 +83,9 @@ const App: React.FC = () => {
         console.log('client >>> ', client)
     }
     
-    const fetchAllObjectsFromABucket = () => {
-        // console.log('fetching all objects from a bucket...')
-    }
-    
-    const fetchObjectsFromSomePrefix = (absolutePath: string) => {
-        // console.log('fetch objects from some prefix...')
-        // console.log('absolutePath >>> ', absolutePath)
-    }
-    
-    const createObject = async () => {
-        
-        try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName && client) {
-                
-                const params = {
-                    Bucket: credentials.bucketName,
-                    Key: 'prefix/subprefix/deeperprefix',
-                    Body: "Hello from deeperprefix (nothing)"
-                }
-                
-                const command = new PutObjectCommand(params)
-                const response = await client.send(command)
-                
-                console.log('response from creating an object >>> ', response)
-            }
-        } catch (err) {
-            dispatch(authActions.logout())
-            console.error('error uploading object: ', err)
-        }
-    }
-    
-    const getObjectData = async () => {
-
-        try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
-                
-                const params = {
-                    Bucket: credentials.bucketName,
-                    Key: 'prefix/subprefix/deeperprefix'
-                }
-                const command = new GetObjectCommand(params)
-                const response = await client.send(command)
-                
-                console.log('response from getting object data >>> ', response)
-                
-                let objectTextData;
-                if( response.Body ) {
-                    objectTextData = await response.Body.transformToString();
-                }
-                
-                console.log('objectTextData from getting object data >>> ', objectTextData)
-                
-            } else {
-                dispatch(authActions.logout())
-                throw new Error("An error occurred while fetching objects");
-            }
-        } catch (error) {
-            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
-        }
-    }
-    
-    const deleteObject = async () => {
-        
-        try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
-                const params = {
-                    Bucket: credentials.bucketName,
-                    Key: 'prefix/subprefix/object.txt'
-                }
-                const command = new DeleteObjectCommand(params)
-                const response = await client.send(command)
-                
-                console.log('response from deleting an object >>> ', response)
-                
-            } else {
-                dispatch(authActions.logout())
-                throw new Error("An error occurred while fetching objects");
-            }
-        } catch (error) {
-            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
-        }
-    }
-    
     return (
         <Fragment>
-            <section className={styles["root_section"]}>
+            <section className={styles["root_section"]} onClick={() => dispatch(awsActions.toggleDropdown(''))}>
                 {!authState.isAuthenticated ?
                     <BaseDialog title='Enter your S3 Credentials'>
                         <SubmitForm onSaveData={handleEnteredCredentials} />
@@ -200,18 +112,10 @@ const App: React.FC = () => {
                                 }
                             </Fragment>
                         }
-                        <CurrentDirectory/>
+                        <CurrentDirectory />
                     </Fragment>
                 }
             </section>
-            <br/>
-            <span>isOnline {isOnline.toString()}</span>
-            <button onClick={() => setCurrentPrefix('prefix/subprefix')}>Get prefix only</button>
-            <button onClick={fetchAllObjectsFromABucket}>Fetch all objects from a bucket</button>
-            <button onClick={fetchObjectsFromSomePrefix.bind(this, 'prefix/subprefix')}>Fetch objects from some prefix</button>
-            <button onClick={createObject}>create object</button>
-            <button onClick={getObjectData}>getting object data </button>
-            <button onClick={deleteObject}>delete object</button>
         </Fragment>
     );
 }
