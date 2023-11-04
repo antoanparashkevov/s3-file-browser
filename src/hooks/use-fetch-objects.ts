@@ -24,8 +24,8 @@ const useFetchObjects = (prefix?: string) => {
     }
     
     useEffect(() => {
-        console.log('DEBUG: Fetching objects ...')
-        console.log('DEBUG: prefix >>> ', prefix)
+        // console.log('DEBUG: Fetching objects ...')
+        // console.log('DEBUG: prefix >>> ', prefix)
         if( credentials && typeof credentials === 'object' && client ) {
             let params: ParamsInterface = {
                 Bucket: credentials.bucketName
@@ -41,12 +41,12 @@ const useFetchObjects = (prefix?: string) => {
             
             client.send(command)
                 .then((response: ListObjectsV2CommandOutput) => {
-                    console.log('DEBUG: response >>> ', response)
+                    // console.log('DEBUG: response >>> ', response)
                     if( response.$metadata.httpStatusCode === 200 && response.Contents ) {
                         let modifiedResponse = response.Contents.map(object => {
                             return object.Key ?? ''
                         })
-                        console.log('DEBUG: modifiedResponse >>> ', modifiedResponse)
+                        // console.log('DEBUG: modifiedResponse >>> ', modifiedResponse)
                         
                         setData(modifiedResponse);
                     } 

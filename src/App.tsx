@@ -31,25 +31,26 @@ import useFetchObjects from "./hooks/use-fetch-objects";
 import useOnlineStatus from "./hooks/use-online-status";
 import getObjectTree from "./util/getObjectTree";
 
+//redux
+import { authActions, Store } from "./store";
+import { useSelector, useDispatch } from 'react-redux';
+
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
 
 const App: React.FC = () => {
+    //util
     let client = getClient();
     const credentials = getCredentials();
     
-    const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(!!client);
+    //custom hooks
+    const isOnline = useOnlineStatus()//TODO use a tooltip that indicates the network status of the user
+    
+    //redux
+    const authState = useSelector((state: Store) => state.auth);
+    const dispatch = useDispatch();
+    
+    //state
     const [currentPrefix, setCurrentPrefix] = useState('');
-    
-    const isOnline = useOnlineStatus()
-    
-    const fetchAllObjectsFromABucket = () => {
-        console.log('fetching all objects from a bucket...')
-    }
-    
-    const fetchObjectsFromSomePrefix = (absolutePath: string) => {
-        console.log('fetch objects from some prefix...')
-        console.log('absolutePath >>> ', absolutePath)
-    }
     
     const {
         data: allObjects,
@@ -58,23 +59,43 @@ const App: React.FC = () => {
         resetError: resetErrorAllObjects,
     } = useFetchObjects();
     
+    useEffect(() => {
+        if(!credentials) {
+            dispatch(authActions.logout())
+        } else {
+            dispatch(authActions.login())
+        }
+    }, []);
+    
     const handleEnteredCredentials = (data: awsCredentials) => {
-        setHasLoggedIn(true)
         
-        localStorage.setItem('awsCredentials', JSON.stringify(data))
-        
-        if(!client) {
-            //Update the S3 client with the new credentials
-            client = new S3Client({
-                region,
-                credentials: {
-                    accessKeyId: data.accessKeyId,
-                    secretAccessKey:data.secretAccessKey
-                }
-            })
+        if( localStorage.getItem('awsCredentials') ) {
+            localStorage.clear();
         }
         
+        dispatch(authActions.login());
+        //TODO setCredentials function that encrypts the credentials
+        localStorage.setItem('awsCredentials', JSON.stringify(data))
+        
+        //Update the S3 client with the new credentials
+        client = new S3Client({
+            region,
+            credentials: {
+                accessKeyId: data.accessKeyId,
+                secretAccessKey:data.secretAccessKey
+            }
+        })
+        
         console.log('client >>> ', client)
+    }
+    
+    const fetchAllObjectsFromABucket = () => {
+        console.log('fetching all objects from a bucket...')
+    }
+    
+    const fetchObjectsFromSomePrefix = (absolutePath: string) => {
+        console.log('fetch objects from some prefix...')
+        console.log('absolutePath >>> ', absolutePath)
     }
     
     const createObject = async () => {
@@ -94,6 +115,7 @@ const App: React.FC = () => {
                 console.log('response from creating an object >>> ', response)
             }
         } catch (err) {
+            dispatch(authActions.logout())
             console.error('error uploading object: ', err)
         }
     }
@@ -120,7 +142,7 @@ const App: React.FC = () => {
                 console.log('objectTextData from getting object data >>> ', objectTextData)
                 
             } else {
-                setHasLoggedIn(false);
+                dispatch(authActions.logout())
                 throw new Error("An error occurred while fetching objects");
             }
         } catch (error) {
@@ -142,7 +164,7 @@ const App: React.FC = () => {
                 console.log('response from deleting an object >>> ', response)
                 
             } else {
-                setHasLoggedIn(false);
+                dispatch(authActions.logout())
                 throw new Error("An error occurred while fetching objects");
             }
         } catch (error) {
@@ -153,10 +175,11 @@ const App: React.FC = () => {
     return (
         <Fragment>
             <section className={styles["root_section"]}>
-                {!hasLoggedIn ?
+                {!authState.hasLoggedIn ?
                     <BaseDialog title='Enter your S3 Credentials'>
                         <SubmitForm onSaveData={handleEnteredCredentials} />
-                    </BaseDialog> :
+                    </BaseDialog> 
+                    :
                     <Fragment>
                         {loadingAllObjects ? 'loading...' :
                             <Fragment>
