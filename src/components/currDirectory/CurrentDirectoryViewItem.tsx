@@ -1,6 +1,6 @@
 import styles from "./CurrentDirectoryViewItem.module.scss";
 import React, { Fragment, useState } from "react";
-import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommandOutput } from "@aws-sdk/client-s3";
 
 //UI components
 import BaseDialog from "../UI/BaseDialog";
@@ -18,6 +18,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { awsActions } from "../../store/awsSlice";
 import { State } from "../../store";
 
+//custom hooks
+import useData from "../../hooks/use-data";
+
 interface CurrentDirectoryViewItemInterface {
     name: string,
     isFolder: boolean,
@@ -29,12 +32,15 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         isFolder,
     }
 ) => {
-    const credentials = getCredentials();
-    const client = getClient();
-    
     const [fileContent, setFileContent] = useState<string>('');
     const [openFilePreview, setOpenFilePreview] = useState<boolean>(false);
-    const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+    
+    //custom fetch hook
+    const {
+        error,
+        resetError,
+        sendRequest
+    } = useData()
     
     //redux
     const awsState = useSelector((state: State) => state.aws);
@@ -44,34 +50,18 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         
         //when we click on a file
         if( !isFolder ) {
-            try {
-                if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
-                    
-                    const params = {
-                        Bucket: credentials.bucketName,
-                        Key: awsState.absolutePath + name
-                    }
-                    const command = new GetObjectCommand(params)
-                    const response = await client.send(command)
-                    
-                    console.log('response from getting object data >>> ', response)
-                    
-                    let objectTextData;
-                    if( response.Body ) {
-                        objectTextData = await response.Body.transformToString();
-                    }
-                    
-                    if( objectTextData ) {
-                        setOpenFilePreview(true)
-                        setFileContent(objectTextData)
-                    }
-                    console.log('objectTextData from getting object data >>> ', objectTextData)
-                    
-                } else {
-                    throw new Error("An error occurred while fetching objects");
+            console.log('reading a file ...')
+            const response: GetObjectCommandOutput | undefined | null = await sendRequest('readFile',{name})
+            
+            if( response && response?.Body ) {
+                console.log('response from getting object data >>> ', response);
+                let objectTextData = await response.Body.transformToString();
+                
+                if( objectTextData ) {
+                    console.log('response from getting object data (second) >>> ', objectTextData);
+                    setOpenFilePreview(true);
+                    setFileContent(objectTextData);
                 }
-            } catch (error) {
-                console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
             }
         }
         //when we click on a folder
@@ -98,37 +88,14 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         
         switch (selectedItem.code) {
             case 'delete':
-                await deleteItem()
+                await sendRequest('deleteFile', {name})
             break;
-        }
-    }
-    
-    const deleteItem = async () => {
-        try {
-            if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
-                const params = {
-                    Bucket: credentials.bucketName,
-                    Key: awsState.absolutePath + name
-                }
-                const command = new DeleteObjectCommand(params)
-                const response = await client.send(command)
-                
-                console.log('response from deleting an object >>> ', response)
-                if( response ) {
-                    dispatch(awsActions.toggleDropdown(''))
-                    dispatch(awsActions.fetchData())
-                }
-                
-            } else {
-                throw new Error("An error occurred while fetching objects");
-            }
-        } catch (error) {
-            console.log('error from (fetchAllObjectsFromABucket) >>> ', error)
         }
     }
     
     return (
         <Fragment>
+            {error && <BaseDialog onClose={resetError} title={error} status='error' />}
             <div onContextMenu={handleRightClick} className={styles['current_directory_view_grid_item']} onDoubleClick={handleDoubleClick}>
                 <img
                     src={isFolder ? '/icons/folder.svg' : '/icons/file.svg'}

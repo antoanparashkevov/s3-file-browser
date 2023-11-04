@@ -85,7 +85,11 @@ const useData = () => {
                         (response.$metadata.httpStatusCode === 204 && action === 'deleteFile')
                     )
                 ) {
-                    dispatch(awsActions.fetchData())
+                    
+                    if( action !== 'readFile' ) {
+                        dispatch(awsActions.fetchData())
+                    }
+                    
                     setIsLoading(false)
                     return response;
                 }
