@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useLayoutEffect } from 'react';
 import styles from './App.module.scss';
-//TODO update the tree view and the current directory whenever a change occurs
+
 //aws-sdk
 import {
     S3Client,
@@ -13,6 +13,7 @@ import SubmitForm from "./components/submit/SubmitForm";
 
 //UI components
 import BaseDialog from "./components/UI/BaseDialog";
+import Notification from "./components/UI/Notification";
 
 //interfaces
 import { awsCredentials } from "./aws/credentials";
@@ -40,7 +41,7 @@ const App: React.FC = () => {
     const credentials = getCredentials();
     
     //custom hooks
-    const isOnline = useOnlineStatus()//TODO use a tooltip that indicates the network status of the user
+    const networkStatus = useOnlineStatus()
     
     //redux
     const authState = useSelector((state: State) => state.auth);
@@ -122,6 +123,11 @@ const App: React.FC = () => {
                             </Fragment>
                         }
                         <CurrentDirectory />
+                        {networkStatus &&
+                            <Notification status={networkStatus}>
+                                { networkStatus.charAt(0).toUpperCase() + networkStatus.slice(1) }
+                            </Notification>
+                        }
                     </Fragment>
                 }
             </section>

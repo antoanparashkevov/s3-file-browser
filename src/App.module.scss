@@ -3,6 +3,7 @@
 
 .root_section {
     @include mixins.flexbox('center', 'center', 'row nowrap');
+    position: relative;
     width: 90%;
     height: 550px;
     border-radius: 24px;
