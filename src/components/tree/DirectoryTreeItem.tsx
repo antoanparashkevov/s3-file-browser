@@ -3,8 +3,9 @@ import styles from './DirectoryTreeItem.module.scss';
 import classNames from "classnames/bind";
 
 //redux
-import { useDispatch } from "react-redux";
-import { awsActions } from "../../store/awsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import awsSlice, { awsActions } from "../../store/awsSlice";
+import { State } from "../../store";
 
 const cx = classNames.bind(styles);
 
@@ -26,11 +27,13 @@ const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
     const expandSubDirectories = useRef<boolean>(false);
     
     //redux
+    const awsState = useSelector((state: State) => state.aws)
     const dispatch = useDispatch()
     
     const handleDoubleClick = (e: BaseSyntheticEvent) => {
         e.stopPropagation();
         dispatch(awsActions.changeAbsolutePath(absolutePath));
+        dispatch(awsActions.changeCurrentDirectory(directoryName))
     }
     
     return (
@@ -56,6 +59,9 @@ const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
                     width={24}
                     height={24}
                 />
+            }
+            {awsState.currentDirectory === directoryName &&
+                <span className={styles['tree_view_item_current_directory_indicator']}></span>
             }
         </li>
     )

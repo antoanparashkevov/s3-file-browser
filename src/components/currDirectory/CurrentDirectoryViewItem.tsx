@@ -77,6 +77,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         //when we click on a folder
         else if( isFolder ) { 
             dispatch(awsActions.changeAbsolutePath((awsState.absolutePath) + name + '/'))
+            dispatch(awsActions.changeCurrentDirectory(name))
         }
     }
     

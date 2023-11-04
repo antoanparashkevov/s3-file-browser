@@ -16,6 +16,13 @@
     font-size: variables.$font-size-bigger;
 }
 
+.tree_view_item_current_directory_indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: variables.$white;
+}
+
 .tree_view_item_arrow_img {
     transform: rotate(90deg);
     transition: transform 0.3s ease-in;
