@@ -11,7 +11,10 @@ interface CurrentDirectoryProps {//TODO remove question marks when we build the 
 }
 
 const CurrentDirectory: React.FC<CurrentDirectoryProps> = (
-    {currentPrefix, onChangeFolder}
+    {
+        currentPrefix,
+        onChangeFolder
+    }
 ) => {
     
     return (

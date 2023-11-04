@@ -4,7 +4,6 @@ import styles from './App.module.scss';
 //aws-sdk
 import {
     S3Client,
-    ListObjectsV2Command,
     PutObjectCommand,
     DeleteObjectCommand,
     GetObjectCommand
@@ -20,7 +19,6 @@ import BaseDialog from "./components/UI/BaseDialog";
 
 //interfaces
 import { awsCredentials } from "./aws/credentials";
-import { awsObjectElement } from "./aws/object";
 
 //util
 import getClient from "./util/getClient";

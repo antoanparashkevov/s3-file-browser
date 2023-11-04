@@ -2,7 +2,6 @@ import styles from "./CurrentDirectoryViewItem.module.scss";
 import React, { Fragment, useState } from "react";
 import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
-
 //UI components
 import BaseDialog from "../UI/BaseDialog";
 import Dropdown, { dropdownItem } from "../UI/Dropdown";
@@ -11,12 +10,8 @@ import Dropdown, { dropdownItem } from "../UI/Dropdown";
 import getCredentials from "../../util/getCredentials";
 import getClient from "../../util/getClient";
 
-const dropdownItems = [
-    {
-        name: "Delete",
-        code: "delete"
-    }
-]
+//data
+import dropdownItems from "../../data/dropdownItems";
 
 interface CurrentDirectoryViewItemInterface {
     name: string,
@@ -26,7 +21,12 @@ interface CurrentDirectoryViewItemInterface {
 }
 
 const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
-    {name, isFolder, currentPrefix, onChangeFolder}
+    {
+        name,
+        isFolder,
+        currentPrefix,
+        onChangeFolder
+    }
 ) => {
     const credentials = getCredentials();
     const client = getClient();

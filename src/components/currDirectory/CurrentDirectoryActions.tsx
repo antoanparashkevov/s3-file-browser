@@ -22,7 +22,10 @@ interface CurrentDirectoryActionsInterface {
 }
 
 const CurrentDirectoryActions:React.FC<CurrentDirectoryActionsInterface> = (
-    {currentPrefix, onPrevAction}
+    {
+        currentPrefix,
+        onPrevAction
+    }
 ) => {
     const credentials = getCredentials();
     const client = getClient();
