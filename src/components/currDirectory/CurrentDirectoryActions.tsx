@@ -22,12 +22,6 @@ import { awsActions } from "../../store/awsSlice";
 import useData from "../../hooks/use-data";
 import useInput from "../../hooks/use-input";
 
-interface ParamsInterface {
-    Bucket: string,
-    Key: string,
-    Body?: string
-}
-
 const cx = classNames.bind(styles);
 
 const CurrentDirectoryActions:React.FC = () => {
@@ -135,44 +129,47 @@ const CurrentDirectoryActions:React.FC = () => {
                 </div>
             </div>
             {openDialog &&
-                <BaseDialog onClose={handleCloseDialog}>
-                    <Fragment>
-                        {isLoading && <BaseSpinner />}
-                        {!error ? 
-                        <form className={styles['submit_form']} onSubmit={handleFormSubmission}>
-                            <div className={cx('form_control', {'invalid': nameHasError})}>
-                                <label htmlFor="name">Name your new {isFolder ? 'folder' : 'file'}</label>
-                                <Input
-                                    id='name'
-                                    type='text'
-                                    name='name'
-                                    enteredValue={enteredName}
-                                    onChangeHandler={nameChangeHandler}
-                                    onBlurHandler={nameBlurHandler}
-                                    reset={nameReset}
-                                />
-                                {!isFolder &&
-                                    <div className={cx('form_control', {'invalid': fileContentHasError})}>
-                                        <label htmlFor="file">Enter file content</label>
-                                        <TextArea
-                                            id="file"
-                                            name="fileContent"
-                                            value={enteredFileContent}
-                                            onChange={fileContentChangeHandler}
-                                            onBlur={fileContentBlurHandler}
+                <Fragment>
+                    {!error ?
+                        <BaseDialog onClose={handleCloseDialog}>
+                            <Fragment>
+                                {isLoading && <BaseSpinner />}
+                                <form className={styles['submit_form']} onSubmit={handleFormSubmission}>
+                                    <div className={cx('form_control', {'invalid': nameHasError})}>
+                                        <label htmlFor="name">Name your new {isFolder ? 'folder' : 'file'}</label>
+                                        <Input
+                                            id='name'
+                                            type='text'
+                                            name='name'
+                                            enteredValue={enteredName}
+                                            onChangeHandler={nameChangeHandler}
+                                            onBlurHandler={nameBlurHandler}
+                                            reset={nameReset}
                                         />
+                                        {!isFolder &&
+                                            <div className={cx('form_control', {'invalid': fileContentHasError})}>
+                                                <label htmlFor="file">Enter file content</label>
+                                                <TextArea
+                                                    id="file"
+                                                    name="fileContent"
+                                                    value={enteredFileContent}
+                                                    onChange={fileContentChangeHandler}
+                                                    onBlur={fileContentBlurHandler}
+                                                />
+                                            </div>
+                                        }
                                     </div>
-                                }
-                            </div>
-                            <SecondaryButton>Create</SecondaryButton>
-                        </form> :
-                            <p>error</p>
-                        }
-                    </Fragment>
-                </BaseDialog>
+                                    <SecondaryButton>Create</SecondaryButton>
+                                </form>
+                            </Fragment>
+                        </BaseDialog> :
+                        <BaseDialog onClose={resetError} title={error} status='error' />
+                    }
+                </Fragment>
             }
         </Fragment>
     )
 };
 
 export default CurrentDirectoryActions;
+

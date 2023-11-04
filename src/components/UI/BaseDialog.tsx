@@ -37,7 +37,7 @@ const ModalOverlay = (
 
 const BaseDialog = (
     { children, title, onClose, status = 'success' }:
-        { children: ReactNode, title?: string, onClose?: (shouldClose: boolean) => void, status?: string }
+        { children?: ReactNode, title?: string, onClose?: (shouldClose: boolean) => void, status?: string }
 ) => {
     return (
         <Fragment>
