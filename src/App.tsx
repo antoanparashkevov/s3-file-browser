@@ -33,6 +33,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { State } from "./store";
 import { authActions } from "./store/authSlice";
 import { awsActions } from "./store/awsSlice";
+import BaseSpinner from "./components/UI/BaseSpinner";
 
 const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
 
@@ -108,11 +109,11 @@ const App: React.FC = () => {
                     </BaseDialog> 
                     :
                     <Fragment>
-                        {loadingAllObjects ? 'loading...' :
-                            <Fragment>
-                                {
-                                    allObjects ?
-                                        <section className={styles['tree_view']}>
+                        <section className={styles['tree_view']}>
+                            {loadingAllObjects ? <BaseSpinner /> :
+                                <Fragment>
+                                    {allObjects ?
+                                        <Fragment>
                                             {Object.keys(getObjectTree(allObjects)).map(node => {
                                                 return (
                                                     <DirectoryTree
@@ -123,11 +124,12 @@ const App: React.FC = () => {
                                                     />
                                                 )
                                             })}
-                                        </section> :
+                                        </Fragment> :
                                         <p>No Data</p>
-                                }
-                            </Fragment>
-                        }
+                                    }
+                                </Fragment>
+                            }
+                        </section>
                         <CurrentDirectory />
                         {networkStatus &&
                             <Notification status={networkStatus}>
