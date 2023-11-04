@@ -1,5 +1,4 @@
-import React, { Fragment, useState } from "react";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import React, { FormEvent, Fragment, useState } from "react";
 import styles from "./CurrentDirectoryActions.module.scss";
 import classNames from "classnames/bind";
 
@@ -7,8 +6,8 @@ import classNames from "classnames/bind";
 import { Button, SecondaryButton } from "../UI/BaseButtons";
 import BaseDialog from "../UI/BaseDialog";
 import Input from "../UI/Input";
-import useInput from "../../hooks/use-input";
 import TextArea from "../UI/TextArea";
+import BaseSpinner from "../UI/BaseSpinner";
 
 //util
 import getCredentials from "../../util/getCredentials";
@@ -19,6 +18,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { State } from "../../store";
 import { awsActions } from "../../store/awsSlice";
 
+//custom hooks
+import useData from "../../hooks/use-data";
+import useInput from "../../hooks/use-input";
+
+interface ParamsInterface {
+    Bucket: string,
+    Key: string,
+    Body?: string
+}
+
 const cx = classNames.bind(styles);
 
 const CurrentDirectoryActions:React.FC = () => {
@@ -27,6 +36,14 @@ const CurrentDirectoryActions:React.FC = () => {
     
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [isFolder, setIsFolder] = useState<boolean>(true);
+    
+    //custom fetch hook
+    const {
+        isLoading,
+        error,
+        resetError,
+        sendRequest
+    } = useData()
     
     //redux
     const awsState = useSelector((state: State) => state.aws);
@@ -59,38 +76,30 @@ const CurrentDirectoryActions:React.FC = () => {
         setOpenDialog(!shouldClose)
     }
     
-    const handleFormSubmission = async (e: any) => {
+    const handleFormSubmission = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         
         if( nameIsValid ) {
-            console.log('enteredName >>> ', enteredName)
-            try {
-                if( credentials && typeof credentials === 'object' && credentials.bucketName && client) {
-                    
-                    const params:{Bucket: string, Key: string, Body?: string} = {
-                        Bucket: credentials.bucketName,
-                        Key: awsState.absolutePath + enteredName + (!isFolder ? '.txt' : ''),
-                    }
-                    
-                    if(!isFolder && enteredFileContent && fileContentIsValid ) {
-                        params.Body = enteredFileContent
-                    }
-                    
-                    const command = new PutObjectCommand(params)
-                    const response = await client.send(command)
-                    
-                    if( response ) {
-                        setOpenDialog(false)
-                        nameReset();
-                        fileContentReset()
-                        dispatch(awsActions.fetchData())
-                    }
-                    
-                    console.log('response from creating an object >>> ', response)
-                    
+            
+            if(!isFolder && enteredFileContent && fileContentIsValid) {
+                console.log('creating a file ...')
+                const response = await sendRequest('createFile',{Body: enteredFileContent, name: enteredName})
+                
+                if( response ) {
+                    console.log('response from creating a file >>> ', response)
+                    setOpenDialog(false)
+                    nameReset();
+                    fileContentReset()
                 }
-            } catch (err) {
-                console.error('error uploading object: ', err)
+            } else if( isFolder ) {
+                console.log('creating a folder ...')
+                const response = await sendRequest('createDirectory',{name: enteredName})
+                
+                if( response ) {
+                    console.log('response from creating a folder >>> ', response)
+                    setOpenDialog(false)
+                    nameReset();
+                }
             }
         }
     }
@@ -127,33 +136,39 @@ const CurrentDirectoryActions:React.FC = () => {
             </div>
             {openDialog &&
                 <BaseDialog onClose={handleCloseDialog}>
-                    <form className={styles['submit_form']} onSubmit={handleFormSubmission}>
-                        <div className={cx('form_control', {'invalid': nameHasError})}>
-                            <label htmlFor="name">Name your new {isFolder ? 'folder' : 'file'}</label>
-                            <Input
-                                id='name'
-                                type='text'
-                                name='name'
-                                enteredValue={enteredName}
-                                onChangeHandler={nameChangeHandler}
-                                onBlurHandler={nameBlurHandler}
-                                reset={nameReset}
-                            />
-                        {!isFolder &&
-                            <div className={cx('form_control', {'invalid': fileContentHasError})}>
-                                <label htmlFor="file">Enter file content</label>
-                                <TextArea 
-                                    id="file" 
-                                    name="fileContent"
-                                    value={enteredFileContent}
-                                    onChange={fileContentChangeHandler}
-                                    onBlur={fileContentBlurHandler}
+                    <Fragment>
+                        {isLoading && <BaseSpinner />}
+                        {!error ? 
+                        <form className={styles['submit_form']} onSubmit={handleFormSubmission}>
+                            <div className={cx('form_control', {'invalid': nameHasError})}>
+                                <label htmlFor="name">Name your new {isFolder ? 'folder' : 'file'}</label>
+                                <Input
+                                    id='name'
+                                    type='text'
+                                    name='name'
+                                    enteredValue={enteredName}
+                                    onChangeHandler={nameChangeHandler}
+                                    onBlurHandler={nameBlurHandler}
+                                    reset={nameReset}
                                 />
+                                {!isFolder &&
+                                    <div className={cx('form_control', {'invalid': fileContentHasError})}>
+                                        <label htmlFor="file">Enter file content</label>
+                                        <TextArea
+                                            id="file"
+                                            name="fileContent"
+                                            value={enteredFileContent}
+                                            onChange={fileContentChangeHandler}
+                                            onBlur={fileContentBlurHandler}
+                                        />
+                                    </div>
+                                }
                             </div>
+                            <SecondaryButton>Create</SecondaryButton>
+                        </form> :
+                            <p>error</p>
                         }
-                        </div>
-                        <SecondaryButton>Create</SecondaryButton>
-                    </form>
+                    </Fragment>
                 </BaseDialog>
             }
         </Fragment>

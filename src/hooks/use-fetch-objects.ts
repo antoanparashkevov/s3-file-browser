@@ -29,7 +29,7 @@ const useFetchObjects = (prefix?: string) => {
     useEffect(() => {
         // console.log('DEBUG: Fetching objects ...')
         // console.log('DEBUG: prefix >>> ', prefix)
-        if( credentials && typeof credentials === 'object' && client ) {
+        if( credentials && typeof credentials === 'object' && credentials.bucketName && client ) {
             let params: ParamsInterface = {
                 Bucket: credentials.bucketName
             }
