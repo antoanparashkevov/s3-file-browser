@@ -104,9 +104,9 @@ const CurrentDirectoryActions:React.FC = () => {
                 awsState.absolutePath
         
         //dispatching previous absolute path, so we cut the last fragment and again add a slash at the end
-        let newCurrentAbsolutePath = currentAbsolutePath.split('/').slice(0,-1).join('/').length === 1 ?
+        let newCurrentAbsolutePath = currentAbsolutePath.split('/').slice(0,-1).join('/').length === 0 ?
             currentAbsolutePath.split('/').slice(0,-1).join('') :
-            currentAbsolutePath.split('/').slice(0,-1).join('/')
+            currentAbsolutePath.split('/').slice(0,-1).join('/') + '/'
         
         dispatch(awsActions.changeAbsolutePath(newCurrentAbsolutePath));
     }

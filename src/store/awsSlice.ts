@@ -2,14 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface AwsState {
     absolutePath: string,
-    prevAbsolutePath: string,
     currentDirectory: string,
     clickedCurrentDirectoryDropdownItem: string
 }
 
 const initialAwsState: AwsState = {
     absolutePath: '',
-    prevAbsolutePath: '',
     currentDirectory: 'root',
     clickedCurrentDirectoryDropdownItem: ''
 }

@@ -135,7 +135,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                     height={80}
                 />
                 <span>{name}</span>
-                {awsState.clickedCurrentDirectoryDropdownItem === name &&
+                {awsState.clickedCurrentDirectoryDropdownItem && awsState.clickedCurrentDirectoryDropdownItem === name &&
                     <Dropdown dropdownItems={dropdownItems} onSelectedItem={handleSelectedItem} />
                 }
             </div>
