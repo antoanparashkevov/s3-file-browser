@@ -83,6 +83,7 @@ const CurrentDirectoryActions:React.FC = () => {
                         setOpenDialog(false)
                         nameReset();
                         fileContentReset()
+                        dispatch(awsActions.fetchData())
                     }
                     
                     console.log('response from creating an object >>> ', response)

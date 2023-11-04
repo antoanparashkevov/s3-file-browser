@@ -116,6 +116,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
                 console.log('response from deleting an object >>> ', response)
                 if( response ) {
                     dispatch(awsActions.toggleDropdown(''))
+                    dispatch(awsActions.fetchData())
                 }
                 
             } else {

@@ -7,7 +7,7 @@ import DirectoryTreeItem from "./DirectoryTreeItem";
 //interfaces
 import { tree } from "../../util/getObjectTree";
 
-interface DirectoryTreeProps {//TODO remove question marks when we build the UI
+interface DirectoryTreeProps {
     tree: tree,
     name: string,
     absolutePath: string

@@ -3,13 +3,15 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface AwsState {
     absolutePath: string,
     currentDirectory: string,
-    clickedCurrentDirectoryDropdownItem: string
+    clickedCurrentDirectoryDropdownItem: string,
+    fetchCounter: 0
 }
 
 const initialAwsState: AwsState = {
     absolutePath: '',
     currentDirectory: 'root',
-    clickedCurrentDirectoryDropdownItem: ''
+    clickedCurrentDirectoryDropdownItem: '',
+    fetchCounter: 0
 }
 
 const awsSlice = createSlice({
@@ -24,6 +26,9 @@ const awsSlice = createSlice({
         },
         toggleDropdown(state: AwsState, action: {payload: string}) {
             state.clickedCurrentDirectoryDropdownItem = action.payload;
+        },
+        fetchData(state: AwsState) {
+            state.fetchCounter++
         }
     }
 });

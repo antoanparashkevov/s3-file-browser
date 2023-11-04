@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useLayoutEffect } from 'react';
 import styles from './App.module.scss';
-
+//TODO update the tree view and the current directory whenever a change occurs
 //aws-sdk
 import {
     S3Client,

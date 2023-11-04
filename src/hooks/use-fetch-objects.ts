@@ -4,7 +4,10 @@ import { ListObjectsV2Command, ListObjectsV2CommandOutput } from "@aws-sdk/clien
 //util
 import getCredentials from "../util/getCredentials";
 import getClient from "../util/getClient";
-import getObjectTree from "../util/getObjectTree";
+
+//redux
+import { useSelector } from "react-redux";
+import { State } from "../store";
 
 interface ParamsInterface {
     Bucket: string,
@@ -15,6 +18,9 @@ const useFetchObjects = (prefix?: string) => {
     const [data, setData] = useState<string[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    
+    //redux
+    const awsState = useSelector((state: State) => state.aws);
     
     const credentials = getCredentials();
     const client = getClient();
@@ -64,7 +70,7 @@ const useFetchObjects = (prefix?: string) => {
                 })
         }
         
-    }, [prefix]);
+    }, [prefix, awsState.fetchCounter]);
     
     const resetError = () => {
         setError(null)
