@@ -9,10 +9,6 @@ import Input from "../UI/Input";
 import TextArea from "../UI/TextArea";
 import BaseSpinner from "../UI/BaseSpinner";
 
-//util
-import getCredentials from "../../util/getCredentials";
-import getClient from "../../util/getClient";
-
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../../store";
@@ -25,8 +21,6 @@ import useInput from "../../hooks/use-input";
 const cx = classNames.bind(styles);
 
 const CurrentDirectoryActions:React.FC = () => {
-    const credentials = getCredentials();
-    const client = getClient();
     
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [isFolder, setIsFolder] = useState<boolean>(true);
@@ -111,8 +105,18 @@ const CurrentDirectoryActions:React.FC = () => {
         let newCurrentAbsolutePath = currentAbsolutePath.split('/').slice(0,-1).join('/').length === 0 ?
             currentAbsolutePath.split('/').slice(0,-1).join('') :
             currentAbsolutePath.split('/').slice(0,-1).join('/') + '/'
+        console.log('newCurrentAbsolutePath >>> ', )
         
+        let newCurrentAbsolutePathAsArray:string[] = newCurrentAbsolutePath.split('/').slice(0, -1)
+        let currentDirectory: string = ''
+        if( newCurrentAbsolutePathAsArray.length > 0 ) {
+            currentDirectory = newCurrentAbsolutePathAsArray[newCurrentAbsolutePathAsArray.length - 1]
+        } else {
+            currentDirectory = ''
+        }
+            
         dispatch(awsActions.changeAbsolutePath(newCurrentAbsolutePath));
+        dispatch(awsActions.changeCurrentDirectory(currentDirectory));
     }
     
     return (

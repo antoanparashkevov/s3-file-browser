@@ -45,7 +45,7 @@ const useFetchObjects = (prefix?: string) => {
             
             client.send(command)
                 .then((response: ListObjectsV2CommandOutput) => {
-                    console.log('DEBUG: response >>> ', response)
+                    // console.log('DEBUG: response >>> ', response)
                     if( response.$metadata.httpStatusCode === 200 ) {
                         
                         if( response.Contents ) {
@@ -66,7 +66,7 @@ const useFetchObjects = (prefix?: string) => {
                     setIsLoading(false)
                 })
                 .catch((error: {message: string}) => {
-                    console.log('DEBUG: error >>> ', error)
+                    // console.log('DEBUG: error >>> ', error)
                     setError(error.message || 'Something went wrong')
                     setData(null);
                     setIsLoading(false)
