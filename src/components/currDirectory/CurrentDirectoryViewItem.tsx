@@ -13,6 +13,10 @@ import getClient from "../../util/getClient";
 //data
 import dropdownItems from "../../data/dropdownItems";
 
+//redux
+import { useDispatch } from "react-redux";
+import { awsActions } from "../../store/awsSlice";
+
 interface CurrentDirectoryViewItemInterface {
     name: string,
     isFolder: boolean,
@@ -31,9 +35,11 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
     const credentials = getCredentials();
     const client = getClient();
     
-    const [fileContent, setFileContent] = useState<string>('')
+    const [fileContent, setFileContent] = useState<string>('');
     const [openFilePreview, setOpenFilePreview] = useState<boolean>(false);
-    const [openDropdown, setOpenDropdown] = useState<boolean>(false)
+    const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+    
+    const dispatch = useDispatch();
     
     const handleDoubleClick = async () => {
         
@@ -73,6 +79,7 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
         else if( isFolder ) { 
             console.log('absolute path >>> ', currentPrefix + name)
             onChangeFolder(currentPrefix + name)
+            dispatch(awsActions.changeAbsolutePath(currentPrefix + name))
         }
     }
     

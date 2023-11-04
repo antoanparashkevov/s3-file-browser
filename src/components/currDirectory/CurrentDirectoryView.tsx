@@ -1,12 +1,15 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import styles from './CurrentDirectoryView.module.scss';
 import classNames from "classnames/bind";
 
 //currDir
 import CurrentDirectoryViewItem from "./CurrentDirectoryViewItem";
-import currentDirectory from "./CurrentDirectory";
 import useFetchObjects from "../../hooks/use-fetch-objects";
 import getCurrDirectoryView from "../../util/getCurrDirectoryView";
+
+//redux
+import { useSelector } from "react-redux";
+import { State } from "../../store";
 
 const cx = classNames.bind(styles)
 
@@ -21,13 +24,14 @@ const CurrentDirectoryView: React.FC<CurrentDirectoryViewInterface> = (
         onChangeFolder
     }
 ) => {
+    const awsState = useSelector((state:State) => state.aws);
     
     const {
         data: allObjectsFromPrefix,
         isLoading: loadingAllObjectsFromPrefix,
         error: errorAllObjectsFromPrefix,
         resetError: resetErrorAllObjectsFromPrefix,
-    } = useFetchObjects(currentPrefix);
+    } = useFetchObjects(awsState.absolutePath);
     
     return (
         <div className={styles['current_directory_view']}>

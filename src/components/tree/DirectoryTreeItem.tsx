@@ -1,6 +1,10 @@
-import React, { BaseSyntheticEvent, useEffect, useRef } from "react";
+import React, { BaseSyntheticEvent, useRef } from "react";
 import styles from './DirectoryTreeItem.module.scss';
 import classNames from "classnames/bind";
+
+//redux
+import { useDispatch } from "react-redux";
+import { awsActions } from "../../store/awsSlice";
 
 const cx = classNames.bind(styles);
 
@@ -21,12 +25,15 @@ const DirectoryTreeItem: React.FC<DirectoryTreeItemProps> = (
         absolutePath
     }
 ) => {
-    const expandSubDirectories = useRef<boolean>(false)
+    const expandSubDirectories = useRef<boolean>(false);
+    
+    //redux
+    const dispatch = useDispatch()
     
     const handleDoubleClick = (e: BaseSyntheticEvent) => {
         e.stopPropagation();
-        console.log('absolute path >>>', absolutePath)
         onDoubleClick(absolutePath)
+        dispatch(awsActions.changeAbsolutePath(absolutePath));
     }
     
     return (

@@ -89,12 +89,12 @@ const App: React.FC = () => {
     }
     
     const fetchAllObjectsFromABucket = () => {
-        console.log('fetching all objects from a bucket...')
+        // console.log('fetching all objects from a bucket...')
     }
     
     const fetchObjectsFromSomePrefix = (absolutePath: string) => {
-        console.log('fetch objects from some prefix...')
-        console.log('absolutePath >>> ', absolutePath)
+        // console.log('fetch objects from some prefix...')
+        // console.log('absolutePath >>> ', absolutePath)
     }
     
     const createObject = async () => {
