@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import styles from './CurrentDirectoryView.module.scss';
 import classNames from "classnames/bind";
 

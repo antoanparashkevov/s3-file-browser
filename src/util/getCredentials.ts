@@ -14,9 +14,7 @@ export default function getCredentials() {
             }
         )
         
-        const decryptedCredentials = JSON.parse(decryptedBytes.toString(CryptoJS.enc.Utf8))
-        
-        return decryptedCredentials;
+        return JSON.parse(decryptedBytes.toString(CryptoJS.enc.Utf8))
     }
     
     return null;

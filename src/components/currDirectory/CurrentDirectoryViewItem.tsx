@@ -50,11 +50,9 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
             const response: GetObjectCommandOutput | undefined | null = await sendRequest('readFile',{name})
             
             if( response && response?.Body ) {
-                console.log('response from getting object data >>> ', response);
                 let objectTextData = await response.Body.transformToString();
                 
                 if( objectTextData ) {
-                    console.log('response from getting object data (second) >>> ', objectTextData);
                     setOpenFilePreview(true);
                     setFileContent(objectTextData);
                 }
@@ -80,7 +78,6 @@ const CurrentDirectoryViewItem: React.FC<CurrentDirectoryViewItemInterface> = (
     }
     
     const handleSelectedItem = async (selectedItem: dropdownItem) => {
-        console.log('selectedItem >>> ', selectedItem)
         
         switch (selectedItem.code) {
             case 'delete':

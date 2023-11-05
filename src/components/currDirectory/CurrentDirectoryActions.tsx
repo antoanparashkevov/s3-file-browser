@@ -74,7 +74,6 @@ const CurrentDirectoryActions:React.FC = () => {
                 const response = await sendRequest('createFile',{Body: enteredFileContent, name: enteredName})
                 
                 if( response ) {
-                    console.log('response from creating a file >>> ', response)
                     setOpenDialog(false)
                     nameReset();
                     fileContentReset()
@@ -84,7 +83,6 @@ const CurrentDirectoryActions:React.FC = () => {
                 const response = await sendRequest('createDirectory',{name: enteredName})
                 
                 if( response ) {
-                    console.log('response from creating a folder >>> ', response)
                     setOpenDialog(false)
                     nameReset();
                 }

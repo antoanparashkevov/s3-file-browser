@@ -1,5 +1,5 @@
 import styles from "./DirectoryTree.module.scss";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 
 //UI components
 import DirectoryTreeItem from "./DirectoryTreeItem";

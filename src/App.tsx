@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useLayoutEffect } from 'react';
+import React, { Fragment, useLayoutEffect } from 'react';
 import styles from './App.module.scss';
 
 //aws-sdk
@@ -48,16 +48,7 @@ const App: React.FC = () => {
     
     //redux
     const authState = useSelector((state: State) => state.auth);
-    const awsState = useSelector((state: State) => state.aws);
     const dispatch = useDispatch();
-    
-    useEffect(() => {
-        console.log('authState', authState)
-    }, [authState]);
-    
-    useEffect(() => {
-        console.log('awsState', awsState)
-    }, [awsState]);
     
     const {
         data: allObjects,

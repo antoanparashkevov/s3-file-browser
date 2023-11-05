@@ -4,7 +4,7 @@ import classNames from "classnames/bind";
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import awsSlice, { awsActions } from "../../store/awsSlice";
+import { awsActions } from "../../store/awsSlice";
 import { State } from "../../store";
 
 const cx = classNames.bind(styles);
