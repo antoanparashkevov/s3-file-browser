@@ -93,7 +93,7 @@ const CurrentDirectoryActions:React.FC = () => {
     }
     
     const handlePrevAction = () => {
-        console.log('previous arrow clicked...')
+        console.log('previous arrow clicked...');
         
         //building absolute path without a slash at the end
         const currentAbsolutePath =
@@ -105,7 +105,6 @@ const CurrentDirectoryActions:React.FC = () => {
         let newCurrentAbsolutePath = currentAbsolutePath.split('/').slice(0,-1).join('/').length === 0 ?
             currentAbsolutePath.split('/').slice(0,-1).join('') :
             currentAbsolutePath.split('/').slice(0,-1).join('/') + '/'
-        console.log('newCurrentAbsolutePath >>> ', )
         
         let newCurrentAbsolutePathAsArray:string[] = newCurrentAbsolutePath.split('/').slice(0, -1)
         let currentDirectory: string = ''
