@@ -85,9 +85,12 @@ const App: React.FC = () => {
     return (
         <Fragment>
             <section className={styles["root_section"]} onClick={() => dispatch(awsActions.toggleDropdown(''))}>
-                {errorAllObjects && 
+                {errorAllObjects && authState.isAuthenticated &&
                     <BaseDialog onClose={resetErrorAllObjects} title={errorAllObjects} status='error'>
-                        <Button onClick={() => dispatch(awsActions.fetchData())}>Try again</Button>
+                        <div style={{display:'flex', justifyContent: 'center', alignItems: 'center', columnGap: '15px'}}>
+                            <Button onClick={() => dispatch(awsActions.fetchData())}>Try again</Button>
+                            <Button onClick={() => dispatch(authActions.logout())}>Logout</Button>
+                        </div>
                     </BaseDialog>
                 }
                 {!authState.isAuthenticated ?
