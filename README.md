@@ -1,46 +1,80 @@
-# Getting Started with Create React App
+# S3 File Browser
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Run `npm install` to install all dependencies and then `npm start` to start the development server
 
-## Available Scripts
+# Table of Contents
+- <a href="#about">About this Project</a>
+- <a href="#how-to-run">How to run the app on your computer</a>
+- <a href="#features">Features</a>
+- <a href="#project-structure">Project Structure</a>
+- <a href="#tools">Tools</a>
+- <a href="#application-pictures">Application Pictures</a>
 
-In the project directory, you can run:
+# <p id="about">About this project</p>
 
-### `npm start`
+S3 File System is a React Front End application that enables users to browse an S3 bucket as a filesystem and to perform various operations such as create, read, and delete files.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# <p id="how-to-run">How to run the app on your computer</p>
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1. You can download the project ZIP file or you can clone the repository directly.
+2. Open the project with IDE/Code Editor like VS Code or any of the Jetbrains product which supports the JavaScript syntax.
+3. Install all modules that are listed on `package.json` file and their dependencies with `npm install` or `yarn install`.
+4. Type `npm start` to run the project in the browser. It will start on `http://localhost:3000`.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# <p id="features">Features</p>
 
-### `npm run build`
+- <strong>Authentication</strong>
+    - Login
+        - log in with your S3 credentials (S3 secret key, access key id, bucket name)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- <strong>Current Working Directory</strong>
+    - Displays the entire content (files and directories) of the current working directory.
+    - Initially, the root directory is considered current.
+    - Navigate up and down the directory structure.
+      - Double-click on a folder enters into the selected folder.
+      - Previous arrow to go back.
+    - Read the content of a file (double-click on a file).
+    - Create new subdirectories.
+    - Create new files with a given content.
+    - Delete files (right-click on a file).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- <strong>Tree view</strong>
+    - Shows only directories.
+    - Initially, it shows only the root subdirectories.
+    - A directory containing subdirectories is marked with an arrow.
+    - When a marked directory is clicked, its subdirectories are displayed.
+    - If an expanded directory is clicked, it collapses.
+    - The current working directory is decorated.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# <p id="project-structure">Project Structure</p>
+- App.tsx
+    - DirectoryTree
+        - DirectoryTreeItem
+    - CurrentDirectory
+        - CurrentDirectoryActions - Create Folder, Create File, Previous Arrow
+        - CurrentDirectoryView
+          - CurrentDirectoryViewItem
+    - hooks - outsourcing stateful logic into reusable functions
+        - use-data
+            - synchronize with an external system (get, create, read, delete)
+        - use-fetch-objects
+            - fetches objects from a bucket whenever a prefix changes and on initial load
+        - use-input
+            - skeleton/template for any input around the Web App
+    - store - Redux => State Management System
+        - authSlice
+            - manage the auth state such as isAuthenticated status
+        - awsSlice
+            - manage the aws state such as currentDirectory, absolutePath
 
-### `npm run eject`
+# <p id="tools">Tools</p>
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- <a href="https://react.dev/">React</a>
+- <a href="https://sass-lang.com/">Scss</a>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# <p id="application-pictures">Application Pictures</p>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Desktop
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Mobile
