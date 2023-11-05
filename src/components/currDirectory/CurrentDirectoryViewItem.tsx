@@ -6,10 +6,6 @@ import { GetObjectCommandOutput } from "@aws-sdk/client-s3";
 import BaseDialog from "../UI/BaseDialog";
 import Dropdown, { dropdownItem } from "../UI/Dropdown";
 
-//util
-import getCredentials from "../../util/getCredentials";
-import getClient from "../../util/getClient";
-
 //data
 import dropdownItems from "../../data/dropdownItems";
 

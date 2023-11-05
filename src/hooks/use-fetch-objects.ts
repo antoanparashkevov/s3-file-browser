@@ -9,6 +9,9 @@ import getClient from "../util/getClient";
 import { useSelector } from "react-redux";
 import { State } from "../store";
 
+//interfaces
+import { awsCredentials } from "../interfaces/credentials";
+
 interface ParamsInterface {
     Bucket: string,
     Prefix?: string,
@@ -23,7 +26,7 @@ const useFetchObjects = (prefix?: string) => {
     const awsState = useSelector((state: State) => state.aws);
     const authState = useSelector((state: State) => state.auth);
     
-    const credentials = getCredentials();
+    const credentials: awsCredentials | null = getCredentials();
     const client = getClient();
     
     useEffect(() => {

@@ -17,10 +17,11 @@ import Notification from "./components/UI/Notification";
 import { Button } from "./components/UI/BaseButtons";
 
 //interfaces
-import { awsCredentials } from "./aws/credentials";
+import { awsCredentials } from "./interfaces/credentials";
 
 //util
 import getClient from "./util/getClient";
+import setCredentials from "./util/setCredentials";
 import getCredentials from "./util/getCredentials";
 
 //custom hooks
@@ -40,7 +41,7 @@ const region: string | undefined = process.env['REACT_APP_AWS_REGION'];
 const App: React.FC = () => {
     //util
     let client = getClient();
-    const credentials = getCredentials();
+    const credentials: awsCredentials | null = getCredentials();
     
     //custom hooks
     const networkStatus = useOnlineStatus()
@@ -75,13 +76,10 @@ const App: React.FC = () => {
     
     const handleEnteredCredentials = (data: awsCredentials) => {
         
-        if( localStorage.getItem('awsCredentials') ) {
-            localStorage.clear();
-        }
+        //encrypts the credentials and add the encrypted credentials into localstorage for persistence
+        setCredentials(data);
         
         dispatch(authActions.login());
-        //TODO setCredentials function that encrypts the credentials
-        localStorage.setItem('awsCredentials', JSON.stringify(data))
         
         //Update the S3 client with the new credentials
         client = new S3Client({
@@ -91,8 +89,6 @@ const App: React.FC = () => {
                 secretAccessKey:data.secretAccessKey
             }
         })
-        
-        console.log('client >>> ', client)
     }
     
     return (

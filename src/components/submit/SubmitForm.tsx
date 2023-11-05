@@ -9,13 +9,13 @@ import Input from "../UI/Input";
 import useInput from "../../hooks/use-input";
 import { SecondaryButton } from "../UI/BaseButtons";
 
-//interface
-import { awsCredentials } from "../../aws/credentials";
+//interfaces
+import { awsCredentials } from "../../interfaces/credentials";
 
 const cx = classNames.bind(styles);
 
 interface SubmitFormProps {
-    onSaveData: ({}: awsCredentials) => void
+    onSaveData: (data: awsCredentials) => void
 }
 
 const SubmitForm: React.FC<SubmitFormProps> = ({onSaveData}) => {
@@ -53,16 +53,17 @@ const SubmitForm: React.FC<SubmitFormProps> = ({onSaveData}) => {
         //we don't want that -> event.preventDefault()
         event.preventDefault();
         
-        console.log('enteredAccessKey >>> ', enteredAccessKey)
-        console.log('enteredSecretKey >>> ', enteredSecretKey)
-        console.log('enteredBucketName >>> ', enteredBucketName)
-        
         if( enteredSecretKey && enteredSecretKey && enteredBucketName ) {
+            
             onSaveData({
                 accessKeyId: enteredAccessKey,
                 secretAccessKey: enteredSecretKey,
                 bucketName: enteredBucketName
             })
+            
+            accessKeyReset();
+            secretKeyReset();
+            bucketNameReset();
         }
         
     };

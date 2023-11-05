@@ -16,6 +16,9 @@ import { awsActions } from "../store/awsSlice";
 import getCredentials from "../util/getCredentials";
 import getClient from "../util/getClient";
 
+//interfaces
+import { awsCredentials } from "../interfaces/credentials";
+
 interface ParamsInterface {
     Bucket: string,
     Key: string,
@@ -28,7 +31,7 @@ const useData = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     
-    const credentials = getCredentials();
+    const credentials: awsCredentials | null = getCredentials();
     const client = getClient();
     
     //redux
